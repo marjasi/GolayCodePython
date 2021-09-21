@@ -19,7 +19,3 @@ class Vector:
         """
 
         self.elements = vectorElements.copy()
-
-
-print("It works, my dude.")
-input("Press Enter to continue...")
