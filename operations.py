@@ -1,22 +1,5 @@
 from vector import Vector
-
-
-def vector_addition(firstVector: Vector, secondVector: Vector) -> Vector:
-    """Metodas, kuris realizuoja dvieju vektoriu sudeties operacija.
-
-    firstVector ir secondVector turi buti Vector klases tipo kintamieji, kuriu ilgiai sutampa.
-    Metodas grazina nauja vektoriu newVector, kuris yra vektoriu sudeties rezultatas.
-    """
-
-    # Jeigu vektoriu ilgiai nesutampa, bus grazintas tuscias vektorius.
-    newVector = Vector([], 0)
-
-    if len(firstVector.elements) == len(secondVector.elements):
-        for firstElement, secondElement in zip(firstVector.elements, secondVector.elements):
-            newVector.elements.append(format_result_mod2(firstElement + secondElement))
-        newVector.essentialElemLen = firstVector.essentialElemLen
-
-    return newVector
+from matrix import Matrix
 
 
 def format_result_mod2(result: int):
@@ -26,3 +9,53 @@ def format_result_mod2(result: int):
     """
 
     return result % 2
+
+
+def vector_addition(firstVector: Vector, secondVector: Vector) -> Vector:
+    """Metodas, kuris realizuoja dvieju vektoriu sudeties operacija.
+
+    firstVector ir secondVector turi buti Vector klases tipo kintamieji, kuriu ilgiai sutampa.
+    Metodas grazina nauja vektoriu resultVector, kuris yra vektoriu sudeties rezultatas.
+    Rezultato vektoriui jau yra pritaikyta mod 2 operacija.
+    """
+
+    # Tuscias vektorius.
+    resultVector = Vector([], 0)
+
+    # Jeigu vektoriu ilgiai nesutampa, bus grazintas tuscias vektorius.
+    if len(firstVector.elements) == len(secondVector.elements):
+        for firstElement, secondElement in zip(firstVector.elements, secondVector.elements):
+            resultVector.elements.append(format_result_mod2(firstElement + secondElement))
+
+        # Imame pirmo metodui paduoto vektoriaus esminiu elementu skaiciu.
+        resultVector.essentialElemLen = firstVector.essentialElemLen
+
+    return resultVector
+
+
+def vector_matrix_multiplication(vector: Vector, matrix: Matrix) -> Vector:
+    """Metodas, kuris realizuoja vektoriaus vector ir matricos matrix daugyba.
+
+    vector turi buti Vector klases tipo kintamasis, o matrix turi buti Matrix klases tipo kintamasis.
+    Metodas grazina nauja vektoriu resultVector, kuris yra vektoriaus ir matricos daugybos rezultatas.
+    Rezultato vektoriui jau yra pritaikyta mod 2 operacija.
+    """
+
+    # Tuscias vektorius.
+    resultVector = Vector([], 0)
+
+    # Turi sutapti vektoriaus stulpeliu skaicius ir matricos eiluciu skaicius.
+    if len(vector.elements) == len(matrix.rows):
+        # Rezultatas bus vektorius, kurio ilgis atitinka matricos stulpeliu skaiciu.
+        for index in range(len(matrix.rows[0])):
+            columnSum = 0
+            # Sudauginame vektoriaus elementus su index-ojo matricos stulpelio elementais ir apskaiciuojame suma.
+            for vectIndex in range(len(vector.elements)):
+                columnSum += vector.elements[vectIndex] * matrix.rows[vectIndex][index]
+
+            # Apskaiciuota suma yra index-asis rezultatu vektoriaus elementas.
+            resultVector.elements.append(format_result_mod2(columnSum))
+
+        resultVector.essentialElemLen = vector.essentialElemLen
+
+    return resultVector

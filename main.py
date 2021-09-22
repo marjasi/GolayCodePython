@@ -1,11 +1,15 @@
 from golay_code import *
 from vector import Vector
 from comm_channel import *
-from operations import vector_addition
+from operations import vector_addition, vector_matrix_multiplication
 
 
 def main():
-    matrixB = generate_matrix_h()
+    for index in range(12):
+        print(index)
+    matrixB = generate_matrix_b()
+    print("Rows:")
+    print(len(matrixB.rows))
     print(matrixB)
     vector = Vector([0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0], 12)
     channel = CommChannel(0.2)
@@ -22,6 +26,9 @@ def main():
     print(secondVector)
     print("Added vector:")
     print(vector_addition(firstVector, secondVector))
+    multVector = Vector([0, 1, 1], 3)
+    print("Mult vector result:")
+    print(vector_matrix_multiplication(vector, generate_matrix_g()))
 
 
 if __name__ == "__main__":
