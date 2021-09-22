@@ -44,6 +44,7 @@ def generate_matrix_g():
 
     return Matrix(matrixRows)
 
+
 def generate_matrix_h():
     """Metodas skirtas matricos H sukurimui.
 

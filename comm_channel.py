@@ -31,6 +31,11 @@ class CommChannel:
         self.probOfError = probOfError
         random.seed()
 
+    def set_prob_of_error(self, probOfError: float):
+        """Metodas skirtas naujos iskraipymo tikimybes nustatymui."""
+
+        self.probOfError = probOfError
+
     def send_binary_info(self, binaryInfo: List[int]) -> List[int]:
         """Metodas skirtas binariniu duomenu persiuntimui kanalu.
 
