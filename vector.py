@@ -19,3 +19,14 @@ class Vector:
         """
 
         self.elements = vectorElements.copy()
+
+    def __str__(self):
+        """Metodas skirtas vektoriaus atspausdinimui kvieciant funkcija print()."""
+
+        text = "( "
+        for element in self.elements:
+            text += str(element) + " "
+
+        text += ")\n"
+
+        return text

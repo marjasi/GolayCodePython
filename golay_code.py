@@ -15,3 +15,4 @@ def generate_matrix_b():
     matrixB = Matrix(matrixRows)
 
     print(matrixB)
+    print(Vector([0, 0, 0, 0, 1, 0]))

@@ -25,7 +25,7 @@ class Matrix:
         for index, row in enumerate(matrixRows):
             rows[index] = row
 
-        self.rows = rows
+        self.rows = rows.copy()
 
     def __str__(self):
         """Metodas skirtas matricos atspausdinimui kvieciant funkcija print()."""
