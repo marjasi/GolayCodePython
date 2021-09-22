@@ -4,7 +4,8 @@ from comm_channel import *
 
 
 def main():
-    generate_matrix_b()
+    matrixB = generate_matrix_b()
+    print(matrixB)
     vector = Vector([0, 1, 1, 1, 0])
     channel = CommChannel(0.1)
     print("Vector before being sent")

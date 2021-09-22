@@ -20,15 +20,14 @@ class Matrix:
         matrixRows elementai turi buti masyvai, kuriu elementai yra integer tipo sveikieji skaiciai.
         """
 
-        rows = [[None] * len(matrixRows[0]) for i in range(len(matrixRows))]
-
-        for index, row in enumerate(matrixRows):
-            rows[index] = row
-
-        self.rows = rows.copy()
+        self.rows = matrixRows.copy()
 
     def __str__(self):
-        """Metodas skirtas matricos atspausdinimui kvieciant funkcija print()."""
+        """
+        Metodas skirtas matricos atspausdinimui kvieciant funkcija print().
+
+        Metodas grazina tekstine matricos reprezentacija.
+        """
 
         text = ""
         for row in self.rows:

@@ -6,6 +6,7 @@ def distort_binary_info(binaryNumber: int) -> int:
     """Metodas skirtas binariniu duomenu iskraipymui.
 
     Metodas 0 pavercia 1, o 1 pavercia 0.
+    Atitinkamai grazinamas 0 arba 1.
     """
 
     return 0 if binaryNumber == 1 else 1
@@ -35,11 +36,11 @@ class CommChannel:
 
         Sugeneruojamas realus skaicius intervale [0, 1] ir pagal iskraipymo tikimybe
          nusprendziama ar informacija bus iskraipyta.
-        Po siuntimo metodas grazina atsiusta binarines informacijos sarasa.
+        Po siuntimo metodas grazina persiusta binarines informacijos sarasa.
         """
 
         for index, element in enumerate(binaryInfo):
-            if random.random() <= self.probOfError:
+            if random.random() < self.probOfError:
                 binaryInfo[index] = distort_binary_info(element)
 
         return binaryInfo

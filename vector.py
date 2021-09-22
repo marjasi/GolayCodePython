@@ -8,7 +8,7 @@ class Vector:
     """
 
     # Vektoriaus elementu masyvas.
-    elements = []
+    elements = None
 
     def __init__(self, vectorElements: List[int]):
         """Konstruktoriaus metodas.
@@ -21,7 +21,11 @@ class Vector:
         self.elements = vectorElements.copy()
 
     def __str__(self):
-        """Metodas skirtas vektoriaus atspausdinimui kvieciant funkcija print()."""
+        """
+        Metodas skirtas vektoriaus atspausdinimui kvieciant funkcija print().
+
+        Metodas grazina tekstine vektoriaus reprezentacija.
+        """
 
         text = "( "
         for element in self.elements:

@@ -3,7 +3,10 @@ from vector import Vector
 
 
 def generate_matrix_b():
-    """Sukuriama matrica B."""
+    """Metodas skirtas matricos B sukurimui.
+
+    Metodas grazina sukurta matrica B.
+    """
 
     matrixRows = [[1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1], [1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1],
                   [0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1], [1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1],
@@ -12,7 +15,4 @@ def generate_matrix_b():
                   [0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1], [1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1],
                   [0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0]]
 
-    matrixB = Matrix(matrixRows)
-
-    print(matrixB)
-    print(Vector([0, 0, 0, 0, 1, 0]))
+    return Matrix(matrixRows)
