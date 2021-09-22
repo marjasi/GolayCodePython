@@ -26,9 +26,9 @@ def main():
     print(secondVector)
     print("Added vector:")
     print(vector_addition(firstVector, secondVector))
-    multVector = Vector([0, 1, 1], 3)
+    multVector = Vector([0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0], 12)
     print("Mult vector result:")
-    print(vector_matrix_multiplication(vector, generate_matrix_g()))
+    print(vector_matrix_multiplication(multVector, generate_matrix_g()))
 
 
 if __name__ == "__main__":
