@@ -40,7 +40,8 @@ def main():
     print(vector_addition(firstVector, secondVector))
     multVector = Vector([0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0], 12)
     print("Mult vector result:")
-    print(vector_matrix_multiplication(multVector, generate_matrix_g()))"""
+    print(vector_matrix_multiplication(multVector, generate_matrix_g()))
+    input("Press any key to continue...")"""
 
 
 if __name__ == "__main__":
