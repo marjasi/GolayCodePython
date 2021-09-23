@@ -1,7 +1,7 @@
 from golay_code import *
 from vector import Vector
 from comm_channel import *
-from operations import vector_addition, vector_matrix_multiplication, check_vector_len, fill_vector_zeros
+from operations import vector_addition, vector_matrix_multiplication, check_vector_len, fill_vector_zeros, get_vector_errors
 
 
 def main():
@@ -17,7 +17,8 @@ def main():
     receivedVector = Vector(channel.send_binary_info(encodedVector.elements), encodedVector.essentialElemLen)
     print("Received from channel vector")
     print(receivedVector)
-
+    print("Kanalo iskraipymu skaicius:")
+    print(get_vector_errors(encodedVector, receivedVector))
     """matrixB = generate_matrix_b()
     print("Rows:")
     print(len(matrixB.rows))

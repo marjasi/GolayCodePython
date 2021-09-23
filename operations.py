@@ -5,7 +5,7 @@ from matrix import Matrix
 def check_vector_len(vector: Vector) -> bool:
     """Metodas, kuris grazina True, jeigu vektoriaus vector ilgis yra 12, ir False, kitu atveju.
 
-    vector turi buti Vector klases tipo objektas.
+    vector turi buti Vector klases tipo kintamasis.
     """
 
     return len(vector.elements) == 12
@@ -14,12 +14,29 @@ def check_vector_len(vector: Vector) -> bool:
 def fill_vector_zeros(vector: Vector):
     """Metodas, kuris pripildo vektoriu vector nuliais iki 12 ilgio.
 
-    vector turi buti Vector klases tipo objektas.
+    vector turi buti Vector klases tipo kintmasis.
     """
 
     # Pripildome vektoriu nuliais, kol vektoriaus ilgis nera 12
     while not check_vector_len(vector):
         vector.elements.append(0)
+        
+
+def get_vector_errors(sentVector: Vector, receivedVector: Vector) -> int:
+    """Metodas palygina siunciama vektoriu sentVector su gautu is kanalo vektoriumi receivedVector ir grazina
+        vektoriaus iskraipymu kanale skaiciu.
+        
+    sentVector ir receivedVector turi buti Vector klases tipo kintamieji,
+    Grazinamas iskraipymu skaicius errorCount yra integer tipo sveikas skaicius.
+    """
+
+    errorCount = 0
+
+    for index in range(len(sentVector.elements)):
+        if sentVector.elements[index] != receivedVector.elements[index]:
+            errorCount += 1
+
+    return errorCount
 
 
 def format_result_mod2(result: int):

@@ -36,13 +36,17 @@ class CommChannel:
 
         self.probOfError = probOfError
 
-    def send_binary_info(self, binaryInfo: List[int]) -> List[int]:
+    def send_binary_info(self, vectorElements: List[int]) -> List[int]:
         """Metodas skirtas binariniu duomenu persiuntimui kanalu.
 
         Sugeneruojamas realus skaicius intervale [0, 1] ir pagal iskraipymo tikimybe
          nusprendziama ar informacija bus iskraipyta.
         Po siuntimo metodas grazina persiusta binarines informacijos sarasa.
+        vectorElements turi buti masyvas, kurio elementai yra integer tipo sveikieji skaiciai.
+        Metodas grazina masyva binaryInfo, kuriame yra iskraipyti vektoriaus elementai.
         """
+
+        binaryInfo = vectorElements.copy()
 
         for index, element in enumerate(binaryInfo):
             if random.random() < self.probOfError:
