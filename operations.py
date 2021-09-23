@@ -1,3 +1,5 @@
+import copy
+
 from vector import Vector
 from matrix import Matrix
 
@@ -11,6 +13,16 @@ def check_vector_len(vector: Vector) -> bool:
     return len(vector.elements) == 12
 
 
+def remove_last_vector_element(vector: Vector):
+    """Metodas, kuris pasalina paskutini vektoriaus vector elementa.
+
+    vector turi buti Vector klases tipo kintamasis.
+    """
+
+    if len(vector.elements) > 0:
+        del vector.elements[-1]
+
+
 def fill_vector_zeros(vector: Vector):
     """Metodas, kuris pripildo vektoriu vector nuliais iki 12 ilgio.
 
@@ -20,6 +32,22 @@ def fill_vector_zeros(vector: Vector):
     # Pripildome vektoriu nuliais, kol vektoriaus ilgis nera 12
     while not check_vector_len(vector):
         vector.elements.append(0)
+
+
+def merge_vectors(firstVector: Vector, secondVector: Vector) -> Vector:
+    """Metodas, kuris sujungia vektoriu firstVector su vektoriumi secondVector.
+
+    firstVector ir secondVector turi buti Vector klases tipo kintamieji.
+    Metodas grazina sujungta vektoriu mergedVector.
+    """
+
+    mergedVectorElements = []
+    mergedVectorElements.extend(firstVector.elements)
+    mergedVectorElements.extend(secondVector.elements)
+
+    mergedVector = Vector(mergedVectorElements, firstVector.essentialElemLen)
+
+    return mergedVector
 
 
 def get_vector_weight(vector: Vector) -> int:
@@ -86,7 +114,7 @@ def vector_addition(firstVector: Vector, secondVector: Vector) -> Vector:
 
     firstVector ir secondVector turi buti Vector klases tipo kintamieji, kuriu ilgiai sutampa.
     Metodas grazina nauja vektoriu resultVector, kuris yra vektoriu sudeties rezultatas.
-    Rezultato vektoriui jau yra pritaikyta mod 2 operacija.
+    Rezultato vektoriui resultVector jau yra pritaikyta mod 2 operacija.
     """
 
     # Tuscias vektorius.
@@ -108,7 +136,7 @@ def vector_matrix_multiplication(vector: Vector, matrix: Matrix) -> Vector:
 
     vector turi buti Vector klases tipo kintamasis, o matrix turi buti Matrix klases tipo kintamasis.
     Metodas grazina nauja vektoriu resultVector, kuris yra vektoriaus ir matricos daugybos rezultatas.
-    Rezultato vektoriui jau yra pritaikyta mod 2 operacija.
+    Rezultato vektoriui resultVector jau yra pritaikyta mod 2 operacija.
     """
 
     # Tuscias vektorius.
