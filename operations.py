@@ -20,7 +20,40 @@ def fill_vector_zeros(vector: Vector):
     # Pripildome vektoriu nuliais, kol vektoriaus ilgis nera 12
     while not check_vector_len(vector):
         vector.elements.append(0)
-        
+
+
+def get_vector_weight(vector: Vector) -> int:
+    """Metodas, kuris grazina vektoriaus vector svori - vienetu skaiciu vektoriuje vector.
+
+    vector turi buti vector klases tipo kintamasis.
+    Vektoriuje grazinamas vienetu skaicius weight yra integer tipo sveikasis skaicius.
+    """
+
+    weight = 0
+
+    for element in vector.elements:
+        if element == 1:
+            weight += 1
+
+    return weight
+
+
+def add_for_uneven_weight(vector: Vector) -> Vector:
+    """Metodas, kuris prideda 0 ar 1 prie vektoriaus vector galo, kad vienetu skaicius butu nelygynis.
+
+    vector turi buti Vector klases tipo kintamasis.
+    Metodas grazina vektoriu addedVector su prirasytu 0 ar 1 .
+    """
+
+    addedVector = Vector(vector.elements.copy(), vector.essentialElemLen)
+
+    if get_vector_weight(addedVector) % 2 == 0:
+        addedVector.elements.append(1)
+    else:
+        addedVector.elements.append(0)
+
+    return addedVector
+
 
 def get_vector_errors(sentVector: Vector, receivedVector: Vector) -> int:
     """Metodas palygina siunciama vektoriu sentVector su gautu is kanalo vektoriumi receivedVector ir grazina

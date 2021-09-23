@@ -19,6 +19,8 @@ def main():
     print(receivedVector)
     print("Kanalo iskraipymu skaicius:")
     print(get_vector_errors(encodedVector, receivedVector))
+    print("Added 0 or 1 to vector:")
+    print(golayCode.decode_vector(receivedVector))
     """matrixB = generate_matrix_b()
     print("Rows:")
     print(len(matrixB.rows))

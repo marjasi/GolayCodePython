@@ -23,8 +23,7 @@ class Matrix:
         self.rows = matrixRows.copy()
 
     def __str__(self):
-        """
-        Metodas skirtas matricos atspausdinimui kvieciant funkcija print().
+        """Metodas skirtas matricos atspausdinimui kvieciant funkcija print().
 
         Metodas grazina tekstine matricos reprezentacija.
         """

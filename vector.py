@@ -27,8 +27,7 @@ class Vector:
         self.essentialElemLen = essentialElemLen
 
     def __str__(self):
-        """
-        Metodas skirtas vektoriaus atspausdinimui kvieciant funkcija print().
+        """Metodas skirtas vektoriaus atspausdinimui kvieciant funkcija print().
 
         Metodas grazina tekstine vektoriaus reprezentacija.
         """

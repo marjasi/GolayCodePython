@@ -1,6 +1,6 @@
 from vector import Vector
 from matrix import Matrix
-from operations import vector_matrix_multiplication
+from operations import vector_matrix_multiplication, add_for_uneven_weight
 
 
 def generate_matrix_b():
@@ -106,6 +106,18 @@ class GolayCode:
         """Metodas, kuris uzkoduoja vektoriu vector Golejaus kodu ir grazina uzkoduota vektoriu.
 
         vector turi buti Vector klases tipo kintamasis.
+        Metodas grazina uzkoduota vektoriu.
         """
 
         return vector_matrix_multiplication(vector, self.matrixG)
+
+    def decode_vector(self, vector: Vector) -> Vector:
+        """Metodas, kuris dekoduoja vektoriu vector Golejaus kodu ir grazina dekoduota vektoriu.
+
+        vector turi buti Vector klases tipo kintamasis.
+        Metodas grazina dekoduota vektoriu receivedVector.
+        """
+
+        receivedVector = Vector(add_for_uneven_weight(vector).elements, vector.essentialElemLen)
+
+        return receivedVector
