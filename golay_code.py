@@ -1,4 +1,6 @@
+from vector import Vector
 from matrix import Matrix
+from operations import vector_matrix_multiplication
 
 
 def generate_matrix_b():
@@ -99,3 +101,11 @@ class GolayCode:
         self.matrixB = generate_matrix_b()
         self.matrixG = generate_matrix_g()
         self.matrixH = generate_matrix_h()
+
+    def encode_vector(self, vector: Vector) -> Vector:
+        """Metodas, kuris uzkoduoja vektoriu vector Golejaus kodu ir grazina uzkoduota vektoriu.
+
+        vector turi buti Vector klases tipo kintamasis.
+        """
+
+        return vector_matrix_multiplication(vector, self.matrixG)

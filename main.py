@@ -5,6 +5,13 @@ from operations import vector_addition, vector_matrix_multiplication, check_vect
 
 
 def main():
+    golayCode = GolayCode()
+    print("Vector to be encoded:")
+    vector = Vector([0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0], 12)
+    print(vector)
+    print("Vector after encoding")
+    encodedVector = golayCode.encode_vector(vector)
+    print(encodedVector)
 
     """matrixB = generate_matrix_b()
     print("Rows:")
