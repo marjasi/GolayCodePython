@@ -131,26 +131,25 @@ class GolayCode:
         self.matrixH = generate_matrix_h()
         self.zeroVector = generate_zero_vector()
 
-    def check_matrix_b_rows(self, syndrome: Vector) -> tuple[Vector, bool]:
+    def check_matrix_b_rows(self, syndrome: Vector) -> tuple[Vector, int]:
         """Metodas, kuris ivertina, ar yra tokia matricos B eilute i, su kuria
             sudauginus nurodyta sindromo vektoriu gautume vektoriu, kurio svoris
             mazesnis arba lygus 2.
 
         syndrome turi buti Vector klases tipo kintamasis.
-        Metodas grazina reiksmiu rinkini, kurio pirmas elementas yra naujas klaidu vektorius,
-         o antras elementas yra logine konstanta (True arba False), kuri pasako, ar buvo
-         patenkintos vektoriaus svorio salygos, tai yra, ar radome klaidu vektoriu u.
+        Metodas grazina reiksmiu rinkini, kurio pirmas elementas yra vektorius sindromas + bi,
+         o antras elementas yra matricos B eilutes, su kuria buvo rastas klaidu vektorius u, numeri.
         """
 
         for i in range(len(self.matrixB.rows)):
             matrixBRow = Vector(self.matrixB.rows[i], 0)
             sMatrixBRow = vector_addition(syndrome, matrixBRow)
-            # Radome klaidu vektoriu.
+            # Radome tinkama matricos B eilute i.
             if get_vector_weight(sMatrixBRow) <= 2:
-                return merge_vectors(sMatrixBRow, generate_ei_vector(i)), True
+                return sMatrixBRow, i
 
-        # Neradome klaidu vektoriaus.
-        return Vector([], 0), False
+        # Neradome tinkamos matricos B eilutes i.
+        return Vector([], 0), -1
 
     def encode_vector(self, vector: Vector) -> Vector:
         """Metodas, kuris uzkoduoja vektoriu vector Golejaus kodu ir grazina uzkoduota vektoriu.
@@ -193,10 +192,16 @@ class GolayCode:
 
         # Jeigu dar neradome klaidu vektoriaus u, ieskome i-osios matricos B eilutes, kur w(s+bi) <= 2.
         if not errorVectorFound:
-            print("s svoris daugiau uz 3.")
+            print("Sindromo s svoris didesnis uz 3.")
             resultTuple = self.check_matrix_b_rows(syndromeS)
-            errorVector = resultTuple[0]
-            errorVectorFound = resultTuple[1]
+            # Jeigu vienetu skaicius mazesnis arba lygus dviems, tai u = [s + bi, ei].
+            if resultTuple[1] != -1:
+                errorVector = merge_vectors(resultTuple[0], generate_ei_vector(resultTuple[1]))
+                errorVectorFound = True
+                print("Vektorius u = [s + bi, ei]")
+                print(errorVector)
+                print("i = ")
+                print(resultTuple[1])
 
         # Jeigu vis dar neradome klaidu vektoriaus u, skaiciuojame sindroma sB.
         if not errorVectorFound:
@@ -205,16 +210,25 @@ class GolayCode:
             if get_vector_weight(syndromeSB) <= 3:
                 errorVector = merge_vectors(self.zeroVector, syndromeSB)
                 errorVectorFound = True
+                print("Vektorius u = [0, sB]")
+                print(errorVector)
             # Jeigu dar neradome klaidu vektoriaus u, ieskome i-osios matricos B eilutes, kur w(sB+bi) <= 2.
             else:
+                print("Sindromo sB svoris didesnis uz 3.")
                 resultTuple = self.check_matrix_b_rows(syndromeSB)
-                errorVector = resultTuple[0]
-                errorVectorFound = resultTuple[1]
+                # Jeigu vienetu skaicius mazesnis arba lygus dviems, tai u = [ei, sB + bi].
+                if resultTuple[1] != -1:
+                    errorVector = merge_vectors(generate_ei_vector(resultTuple[1]), resultTuple[0])
+                    errorVectorFound = True
+                    print("Vektorius u = [ei, sB + bi]")
+                    print(errorVector)
+                    print("i = ")
+                    print(resultTuple[1])
 
         # Sudedamas gautas vektorius w su klaidu vektoriumi u.
         receivedVector = vector_addition(receivedVector, errorVector)
 
-        print("w + u")
+        print("w + u = ")
         print(receivedVector)
 
         # Pasaliname paskutini vektoriaus receivedVector elementa.

@@ -6,9 +6,9 @@ from operations import vector_addition, vector_matrix_multiplication, check_vect
 
 def main():
     golayCode = GolayCode()
-    channel = CommChannel(0.1)
+    channel = CommChannel(0.2)
     print("Vector to be encoded:")
-    vector = Vector([0, 0, 0, 1, 0, 0], 12)
+    vector = Vector([0, 1, 1, 1, 0, 0], 12)
     fill_vector_zeros(vector)
     print(vector)
     print("Vector after encoding")
@@ -19,8 +19,12 @@ def main():
     print(receivedVector)
     print("Kanalo iskraipymu skaicius:")
     print(get_vector_errors(encodedVector, receivedVector))
+    decodedVector = golayCode.decode_vector(receivedVector)
     print("Dekoduotas vektorius:")
-    print(golayCode.decode_vector(receivedVector))
+    print(decodedVector)
+    print("Pilnai dekoduotas vektorius:")
+    decodedVector.elements = decodedVector.elements[0:decodedVector.essentialElemLen]
+    print(decodedVector)
     """matrixB = generate_matrix_b()
     print("Rows:")
     print(len(matrixB.rows))

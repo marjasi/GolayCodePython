@@ -36,6 +36,6 @@ class Vector:
         for element in self.elements:
             text += str(element) + " "
 
-        text += ")\n"
+        text += ")"
 
         return text

@@ -33,6 +33,6 @@ class Matrix:
             text += "| "
             for element in row:
                 text += str(element) + " "
-            text += "|\n"
+            text += "|"
 
         return text
