@@ -3,7 +3,7 @@ from matrix import Matrix
 
 
 def check_vector_len(vector: Vector) -> bool:
-    """Metodas, kuris grazina True, jeigu vektoriaus ilgis yra 12, ir False, kitu atveju.
+    """Metodas, kuris grazina True, jeigu vektoriaus vector ilgis yra 12, ir False, kitu atveju.
 
     vector turi buti Vector klases tipo objektas.
     """
