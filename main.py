@@ -1,17 +1,22 @@
 from golay_code import *
 from vector import Vector
 from comm_channel import *
-from operations import vector_addition, vector_matrix_multiplication, check_vector_len
+from operations import vector_addition, vector_matrix_multiplication, check_vector_len, fill_vector_zeros
 
 
 def main():
     golayCode = GolayCode()
+    channel = CommChannel(0.1)
     print("Vector to be encoded:")
-    vector = Vector([0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0], 12)
+    vector = Vector([0, 1, 1, 1, 0, 0], 12)
+    fill_vector_zeros(vector)
     print(vector)
     print("Vector after encoding")
     encodedVector = golayCode.encode_vector(vector)
     print(encodedVector)
+    receivedVector = Vector(channel.send_binary_info(encodedVector.elements), encodedVector.essentialElemLen)
+    print("Received from channel vector")
+    print(receivedVector)
 
     """matrixB = generate_matrix_b()
     print("Rows:")
