@@ -2,6 +2,26 @@ from vector import Vector
 from matrix import Matrix
 
 
+def check_vector_len(vector: Vector) -> bool:
+    """Metodas, kuris grazina True, jeigu vektoriaus ilgis yra 12, ir False, kitu atveju.
+
+    vector turi buti Vector klases tipo objektas.
+    """
+
+    return len(vector.elements) == 12
+
+
+def fill_vector_zeros(vector: Vector):
+    """Metodas, kuris pripildo vektoriu vector nuliais iki 12 ilgio.
+
+    vector turi buti Vector klases tipo objektas.
+    """
+
+    # Pripildome vektoriu nuliais, kol vektoriaus ilgis nera 12
+    while not check_vector_len(vector):
+        vector.elements.append(0)
+
+
 def format_result_mod2(result: int):
     """Metodas, kuris grazina 0 arba 1 priklausomai nuo result liekanos su skaiciumi 2 (mod 2).
 

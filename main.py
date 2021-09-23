@@ -1,13 +1,12 @@
 from golay_code import *
 from vector import Vector
 from comm_channel import *
-from operations import vector_addition, vector_matrix_multiplication
+from operations import vector_addition, vector_matrix_multiplication, check_vector_len
 
 
 def main():
-    for index in range(12):
-        print(index)
-    matrixB = generate_matrix_b()
+
+    """matrixB = generate_matrix_b()
     print("Rows:")
     print(len(matrixB.rows))
     print(matrixB)
@@ -28,7 +27,7 @@ def main():
     print(vector_addition(firstVector, secondVector))
     multVector = Vector([0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0], 12)
     print("Mult vector result:")
-    print(vector_matrix_multiplication(multVector, generate_matrix_g()))
+    print(vector_matrix_multiplication(multVector, generate_matrix_g()))"""
 
 
 if __name__ == "__main__":
