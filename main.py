@@ -6,7 +6,7 @@ from operations import vector_addition, vector_matrix_multiplication, check_vect
 
 def main():
     golayCode = GolayCode()
-    channel = CommChannel(0.2)
+    channel = CommChannel(0.15)
     print("Vector to be encoded:")
     vector = Vector([0, 1, 1, 1, 0, 0], 12)
     fill_vector_zeros(vector)

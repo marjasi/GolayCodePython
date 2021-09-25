@@ -138,7 +138,7 @@ class GolayCode:
 
         syndrome turi buti Vector klases tipo kintamasis.
         Metodas grazina reiksmiu rinkini, kurio pirmas elementas yra vektorius sindromas + bi,
-         o antras elementas yra matricos B eilutes, su kuria buvo rastas klaidu vektorius u, numeri.
+         o antras elementas yra matricos B eilutes, su kuria buvo rastas klaidu vektorius u, numeris.
         """
 
         for i in range(len(self.matrixB.rows)):
@@ -206,6 +206,8 @@ class GolayCode:
         # Jeigu vis dar neradome klaidu vektoriaus u, skaiciuojame sindroma sB.
         if not errorVectorFound:
             syndromeSB = vector_matrix_multiplication(syndromeS, self.matrixB)
+            print("Syndrome sB:")
+            print(syndromeSB)
             # Jeigu vienetu skaicius mazesnis arba lygus trims, tai u = [0, sB].
             if get_vector_weight(syndromeSB) <= 3:
                 errorVector = merge_vectors(self.zeroVector, syndromeSB)
