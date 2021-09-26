@@ -1,5 +1,5 @@
 # Treciuju saliu biblioteka naudojama teskto vertimui i dvejetaini formata ir atvirksciai.
-import bitarray
+from bitarray import bitarray
 from typing import List
 
 # Teksto uzkodavimo formatas.
@@ -14,7 +14,7 @@ def text_to_bit_array(text: str) -> List[int]:
      formata.
     """
 
-    bitArray = bitarray.bitarray()
+    bitArray = bitarray()
     bitArray.frombytes(text.encode(g_text_encoding))
 
     return bitArray.tolist()
@@ -27,4 +27,4 @@ def bit_array_to_text(bitList: List[int]) -> str:
     Grazinamas tekstas yra str tipo kintamasis.
     """
 
-    return bitarray.bitarray(bitList).tobytes().decode(g_text_encoding)
+    return bitarray(bitList).tobytes().decode(g_text_encoding)
