@@ -173,7 +173,6 @@ class GolayCode:
 
         # Pridedame 0 ar 1, kad vektoriaus svoris butu nelyginis.
         receivedVector = Vector(add_for_uneven_weight(vector).elements, vector.essentialElemLen)
-        receivedVector = Vector([0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0], receivedVector.essentialElemLen)
 
         print("Added 0 or 1 to vector:")
         print(receivedVector)
