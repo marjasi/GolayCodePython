@@ -6,16 +6,14 @@ from matrix import Matrix
 def increase_list_values(listToIncrease: List[int], increaseAmount: int) -> List[int]:
     """Metodas, kuris kiekviena masyvo listToIncrease elementa padidina reiksme increaseAmount.
 
-    Metodas grazina masyvo listToIncrease kopija masyva listCopy, kuriame elementai buvo padidinti increaseAmount
+    Metodas grazina masyva listToIncrease, kuriame elementai buvo padidinti increaseAmount
      reiksme.
     """
 
-    listCopy = listToIncrease.copy()
+    for index in range(len(listToIncrease)):
+        listToIncrease[index] += increaseAmount
 
-    for index in range(len(listCopy)):
-        listCopy[index] = listToIncrease[index] + increaseAmount
-
-    return listCopy
+    return listToIncrease
 
 
 def check_vector_len(vector: Vector) -> bool:

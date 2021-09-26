@@ -3,10 +3,14 @@ from vector import Vector
 from comm_channel import *
 from operations import vector_addition, vector_matrix_multiplication, check_vector_len
 from operations import fill_vector_zeros, get_vector_errors, get_vector_error_positions, increase_list_values
+from text_conversion import text_to_bit_array, bit_array_to_text
 
 
 def main():
-    golayCode = GolayCode()
+    bitArray = text_to_bit_array("Sveiki. Esu Šerijus Bolvikas.\nAtvykau su pasiūlymu.\nNorėtumėte išklausyti?\nはなせまな")
+    print(bitArray)
+    print(bit_array_to_text(bitArray))
+    """golayCode = GolayCode()
     channel = CommChannel(0.15)
     print("Vector to be encoded:")
     vector = Vector([0, 1, 1, 1, 0, 0], 12)
@@ -27,7 +31,7 @@ def main():
     print(decodedVector)
     print("Pilnai dekoduotas vektorius:")
     decodedVector.elements = decodedVector.elements[0:decodedVector.essentialElemLen]
-    print(decodedVector)
+    print(decodedVector)"""
     """matrixB = generate_matrix_b()
     print("Rows:")
     print(len(matrixB.rows))
