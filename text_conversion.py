@@ -10,8 +10,7 @@ def text_to_bit_array(text: str) -> List[int]:
     """Metodas, kuris konvertuoja teksta i dvejetaini formata.
 
     Tekstas text turi buti str tipo kintamasis.
-    Grazinamas integer tipo sveikuju skaicius masyvas, kuris ir atitinka dvejetaini
-     formata.
+    Grazinamas integer tipo sveikuju skaiciu masyvas, kuris ir atitinka dvejetaini formata.
     """
 
     bitArray = bitarray()
