@@ -1,7 +1,8 @@
 from golay_code import *
 from vector import Vector
 from comm_channel import *
-from operations import vector_addition, vector_matrix_multiplication, check_vector_len, fill_vector_zeros, get_vector_errors
+from operations import vector_addition, vector_matrix_multiplication, check_vector_len
+from operations import fill_vector_zeros, get_vector_errors, get_vector_error_positions, increase_list_values
 
 
 def main():
@@ -19,6 +20,8 @@ def main():
     print(receivedVector)
     print("Kanalo iskraipymu skaicius:")
     print(get_vector_errors(encodedVector, receivedVector))
+    print("Iskraipymai ivyko pozicijose:")
+    print(increase_list_values(get_vector_error_positions(encodedVector, receivedVector), 1))
     decodedVector = golayCode.decode_vector(receivedVector)
     print("Dekoduotas vektorius:")
     print(decodedVector)

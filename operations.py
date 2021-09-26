@@ -1,7 +1,21 @@
-import copy
-
+from typing import List
 from vector import Vector
 from matrix import Matrix
+
+
+def increase_list_values(listToIncrease: List[int], increaseAmount: int) -> List[int]:
+    """Metodas, kuris kiekviena masyvo listToIncrease elementa padidina reiksme increaseAmount.
+
+    Metodas grazina masyvo listToIncrease kopija masyva listCopy, kuriame elementai buvo padidinti increaseAmount
+     reiksme.
+    """
+
+    listCopy = listToIncrease.copy()
+
+    for index in range(len(listCopy)):
+        listCopy[index] = listToIncrease[index] + increaseAmount
+
+    return listCopy
 
 
 def check_vector_len(vector: Vector) -> bool:
@@ -98,6 +112,23 @@ def get_vector_errors(sentVector: Vector, receivedVector: Vector) -> int:
             errorCount += 1
 
     return errorCount
+
+
+def get_vector_error_positions(sentVector: Vector, receivedVector: Vector) -> List[int]:
+    """Metodas palygina siunciama vektoriu sentVector su gautu is kanalo vektoriumi receivedVector ir grazina
+        pozicijas, kuriose buvo padaryti iskraipymai.
+
+    sentVector ir receivedVector turi buti Vector klases tipo kintamieji,
+    Grazinamas iskraipymu vietu masyvas errorPositions, kurio elementai yra integer tipo sveikieji skaiciai.
+    """
+
+    errorPositions = []
+
+    for index in range(len(sentVector.elements)):
+        if sentVector.elements[index] != receivedVector.elements[index]:
+            errorPositions.append(index)
+
+    return errorPositions
 
 
 def format_result_mod2(result: int):
