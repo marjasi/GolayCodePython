@@ -24,8 +24,8 @@ def generate_ei_vector(i: int) -> Vector:
 
     eiVector = generate_zero_vector()
     for index in range(len(eiVector.elements)):
-        # Pirmasis masyvo elementas yra nulinis.
-        if index + 1 == i:
+        # i-ojoje pozicijoje bus vienetas. Pirma pozicija yra, kai i = 0.
+        if index == i:
             eiVector.elements[index] = 1
 
     return eiVector
@@ -173,6 +173,7 @@ class GolayCode:
 
         # Pridedame 0 ar 1, kad vektoriaus svoris butu nelyginis.
         receivedVector = Vector(add_for_uneven_weight(vector).elements, vector.essentialElemLen)
+        receivedVector = Vector([0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0], receivedVector.essentialElemLen)
 
         print("Added 0 or 1 to vector:")
         print(receivedVector)
@@ -201,7 +202,7 @@ class GolayCode:
                 print("Vektorius u = [s + bi, ei]")
                 print(errorVector)
                 print("i = ")
-                print(resultTuple[1])
+                print(resultTuple[1] + 1)
 
         # Jeigu vis dar neradome klaidu vektoriaus u, skaiciuojame sindroma sB.
         if not errorVectorFound:
@@ -225,7 +226,7 @@ class GolayCode:
                     print("Vektorius u = [ei, sB + bi]")
                     print(errorVector)
                     print("i = ")
-                    print(resultTuple[1])
+                    print(resultTuple[1] + 1)
 
         # Sudedamas gautas vektorius w su klaidu vektoriumi u.
         receivedVector = vector_addition(receivedVector, errorVector)
