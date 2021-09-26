@@ -3,6 +3,21 @@ from vector import Vector
 from matrix import Matrix
 
 
+def divide_list_to_chunks(listToDivide: List[int], chunkSize: int) -> List[int]:
+    """Metodas, kuris masyva listToDivide isskaido i gabalus, kurie yra chunkSize dydzio.
+
+    Skaidomas masyvas listToDivide turi tureti elementus, kurie yra integer tipo sveikieji skaiciai.
+    Gabalu dydis chunkSize turi buti integer tipo sveikasis skaicius.
+    Metodas grazina isskaidyta gabala kaip masyva, kurio elementai yra integer tipo sveikieji skaiciai.
+    """
+
+    # Zodis yield leidzia metodui grazinti nurodyta reiksme ir toliau vykdyti cikla, kol jis baigsis.
+    # Isimenama metodo busena pries gabalo grazinima ir tada programos vykdymui
+    #  grizus i metoda atitinkamai tesiamas ciklo vykdymas.
+    for index in range(0, len(listToDivide), chunkSize):
+        yield listToDivide[index:index + chunkSize]
+
+
 def increase_list_values(listToIncrease: List[int], increaseAmount: int) -> List[int]:
     """Metodas, kuris kiekviena masyvo listToIncrease elementa padidina reiksme increaseAmount.
 
