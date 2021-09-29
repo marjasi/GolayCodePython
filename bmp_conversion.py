@@ -1,4 +1,4 @@
-from text_conversion import text_to_bit_array, bit_array_to_text, g_text_encoding
+import text_conversion as txt_conv
 from base64 import b64encode, b64decode
 from typing import List
 
@@ -14,7 +14,7 @@ def bmp_to_bit_array(bmpFileLocation: str) -> List[int]:
     with open(bmpFileLocation, "rb") as bmpFile:
         encodedBmp = b64encode(bmpFile.read())
 
-    return text_to_bit_array(encodedBmp.decode(g_text_encoding))
+    return txt_conv.text_to_bit_array(encodedBmp.decode(txt_conv.g_text_encoding))
 
 
 def bit_array_to_bmp(bitList: List[int], newBmpFileLocation: str):
@@ -25,8 +25,8 @@ def bit_array_to_bmp(bitList: List[int], newBmpFileLocation: str):
     bmp tipo failo vieta newBmpFileLocation turi buti str tipo kintamasis.
     """
 
-    encodedBmp = bit_array_to_text(bitList)
+    encodedBmp = txt_conv.bit_array_to_text(bitList)
 
     # Failo vieta atidaroma su write binary rezimu.
     with open(newBmpFileLocation, "wb") as newBmpFile:
-        newBmpFile.write(b64decode(encodedBmp.encode(g_text_encoding)))
+        newBmpFile.write(b64decode(encodedBmp.encode(txt_conv.g_text_encoding)))

@@ -1,16 +1,20 @@
-from golay_code import *
+from golay_window import GolayWindow
+from golay_code import GolayCode
 from vector import Vector
-from comm_channel import *
-from operations import vector_addition, vector_matrix_multiplication, check_vector_len, divide_list_to_chunks
-from operations import fill_vector_zeros, get_vector_errors, get_vector_error_positions, increase_list_values
-from text_conversion import text_to_bit_array, bit_array_to_text
-from bmp_conversion import bmp_to_bit_array, bit_array_to_bmp
+from comm_channel import CommChannel
+import operations as op
+import text_conversion as txt_conv
+import bmp_conversion as bmp_conv
 
 
 def main():
-    bmpBitArray = bmp_to_bit_array("bmp/testFile1.bmp")
-    print(list(divide_list_to_chunks(bmpBitArray, 12)))
-    bit_array_to_bmp(bmpBitArray, "bmp/result1.bmp")
+    golayCode = GolayCode()
+    channel = CommChannel(0.15)
+    window = GolayWindow()
+    window.create_probability_window()
+    """bmpBitArray = bmp_conv.bmp_to_bit_array("bmp/testFile1.bmp")
+    print(list(op.divide_list_to_chunks(bmpBitArray, 12)))
+    bmp_conv.bit_array_to_bmp(bmpBitArray, "bmp/result1.bmp")"""
     """bitArray = text_to_bit_array("Sveiki. Esu Šerijus Bolvikas.\nAtvykau su pasiūlymu.\nNorėtumėte išklausyti?\nはなせまな")
     print(bitArray)
     print(bit_array_to_text(bitArray))"""

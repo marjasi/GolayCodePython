@@ -1,5 +1,4 @@
 from typing import List
-from vector import Vector
 
 
 class Matrix:

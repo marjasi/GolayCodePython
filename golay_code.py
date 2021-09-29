@@ -1,7 +1,6 @@
 from vector import Vector
 from matrix import Matrix
-from operations import vector_addition, remove_last_vector_element, merge_vectors, vector_matrix_multiplication
-from operations import get_vector_weight, add_for_uneven_weight
+import operations as op
 
 
 def generate_zero_vector() -> Vector:
@@ -143,9 +142,9 @@ class GolayCode:
 
         for i in range(len(self.matrixB.rows)):
             matrixBRow = Vector(self.matrixB.rows[i], 0)
-            sMatrixBRow = vector_addition(syndrome, matrixBRow)
+            sMatrixBRow = op.vector_addition(syndrome, matrixBRow)
             # Radome tinkama matricos B eilute i.
-            if get_vector_weight(sMatrixBRow) <= 2:
+            if op.get_vector_weight(sMatrixBRow) <= 2:
                 return sMatrixBRow, i
 
         # Neradome tinkamos matricos B eilutes i.
@@ -158,7 +157,7 @@ class GolayCode:
         Metodas grazina uzkoduota vektoriu.
         """
 
-        return vector_matrix_multiplication(vector, self.matrixG)
+        return op.vector_matrix_multiplication(vector, self.matrixG)
 
     def decode_vector(self, vector: Vector) -> Vector:
         """Metodas, kuris dekoduoja vektoriu vector Golejaus kodu ir grazina dekoduota vektoriu.
@@ -172,20 +171,20 @@ class GolayCode:
         errorVectorFound = False
 
         # Pridedame 0 ar 1, kad vektoriaus svoris butu nelyginis.
-        receivedVector = Vector(add_for_uneven_weight(vector).elements, vector.essentialElemLen)
+        receivedVector = Vector(op.add_for_uneven_weight(vector).elements, vector.essentialElemLen)
 
         print("Added 0 or 1 to vector:")
         print(receivedVector)
 
         # Apskaiciuojame sindroma s padaugine pailginta vektoriu receivedVector su matrica H.
-        syndromeS = vector_matrix_multiplication(receivedVector, self.matrixH)
+        syndromeS = op.vector_matrix_multiplication(receivedVector, self.matrixH)
 
         print("Syndrome s:")
         print(syndromeS)
 
         # Jeigu vienetu skaicius mazesnis arba lygus trims, tai u = [s, 0].
-        if get_vector_weight(syndromeS) <= 3:
-            errorVector = merge_vectors(syndromeS, self.zeroVector)
+        if op.get_vector_weight(syndromeS) <= 3:
+            errorVector = op.merge_vectors(syndromeS, self.zeroVector)
             errorVectorFound = True
             print("Vektorius u = [s, 0]")
             print(errorVector)
@@ -196,7 +195,7 @@ class GolayCode:
             resultTuple = self.check_matrix_b_rows(syndromeS)
             # Jeigu vienetu skaicius mazesnis arba lygus dviems, tai u = [s + bi, ei].
             if resultTuple[1] != -1:
-                errorVector = merge_vectors(resultTuple[0], generate_ei_vector(resultTuple[1]))
+                errorVector = op.merge_vectors(resultTuple[0], generate_ei_vector(resultTuple[1]))
                 errorVectorFound = True
                 print("Vektorius u = [s + bi, ei]")
                 print(errorVector)
@@ -205,12 +204,12 @@ class GolayCode:
 
         # Jeigu vis dar neradome klaidu vektoriaus u, skaiciuojame sindroma sB.
         if not errorVectorFound:
-            syndromeSB = vector_matrix_multiplication(syndromeS, self.matrixB)
+            syndromeSB = op.vector_matrix_multiplication(syndromeS, self.matrixB)
             print("Syndrome sB:")
             print(syndromeSB)
             # Jeigu vienetu skaicius mazesnis arba lygus trims, tai u = [0, sB].
-            if get_vector_weight(syndromeSB) <= 3:
-                errorVector = merge_vectors(self.zeroVector, syndromeSB)
+            if op.get_vector_weight(syndromeSB) <= 3:
+                errorVector = op.merge_vectors(self.zeroVector, syndromeSB)
                 errorVectorFound = True
                 print("Vektorius u = [0, sB]")
                 print(errorVector)
@@ -220,7 +219,7 @@ class GolayCode:
                 resultTuple = self.check_matrix_b_rows(syndromeSB)
                 # Jeigu vienetu skaicius mazesnis arba lygus dviems, tai u = [ei, sB + bi].
                 if resultTuple[1] != -1:
-                    errorVector = merge_vectors(generate_ei_vector(resultTuple[1]), resultTuple[0])
+                    errorVector = op.merge_vectors(generate_ei_vector(resultTuple[1]), resultTuple[0])
                     errorVectorFound = True
                     print("Vektorius u = [ei, sB + bi]")
                     print(errorVector)
@@ -228,12 +227,12 @@ class GolayCode:
                     print(resultTuple[1] + 1)
 
         # Sudedamas gautas vektorius w su klaidu vektoriumi u.
-        receivedVector = vector_addition(receivedVector, errorVector)
+        receivedVector = op.vector_addition(receivedVector, errorVector)
 
         print("w + u = ")
         print(receivedVector)
 
         # Pasaliname paskutini vektoriaus receivedVector elementa.
-        remove_last_vector_element(receivedVector)
+        op.remove_last_vector_element(receivedVector)
 
         return receivedVector
