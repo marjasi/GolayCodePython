@@ -13,13 +13,39 @@ class GolayWindow:
     # Programos langas. Nebutinai pagrindinis
     window = None
 
+    def set_window_properties(self, width: int, height: int, title: str, center=True):
+        """Metodas, kuris leidzia nurodyti lango ypatybes.
+
+        width yra int tipo sveikasis skaicius, kuris nusako lango ploti pikseliais.
+        height yra int tipo sveikasis skaicius, kuris nusako lango auksti pikseliais.
+        title yra str tipo kintamasis, kuris nusako lango pavadinima.
+        center yra bool tipo kintamasis. center pagal nutylejima yra True.
+        Jeigu center yra True, tai lango pozicija pakeiciame i ekrano viduri.
+        Jeigu center yra False, tai lango pozicija nekeiciama ir langas bus parodomas neapibreztoje
+         vietoje atsitiktinai.
+        """
+
+        self.window.title(title)
+
+        if center:
+            # Gaunamas ekrano plotas ir aukstis.
+            screenWidth = self.window.winfo_screenwidth()
+            screenHeight = self.window.winfo_screenheight()
+
+            # Suskaiciuojamos lango pozicijos koordinates.
+            x = (screenWidth / 2) - (width / 2)
+            y = (screenHeight / 2) - (height / 2)
+
+            self.window.geometry("%dx%d+%d+%d" % (width, height, x, y))
+        else:
+            self.window.geometry("%dx%d" % (width, height))
+
     def create_probability_window(self):
         """Konstruktoriaus metodas, kuris sukuria kanalo tikimybes nurodymo langa."""
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.window.geometry("400x100")
-        self.window.title("Channel Distortion")
+        self.set_window_properties(400, 100, "Channel Distortion")
 
         # Ivestis ir mygtukas kanalo iskraipymo tikimybei.
         probEntry = Entry(self.window)
@@ -28,7 +54,6 @@ class GolayWindow:
         probButton = Button(self.window, padx=50)
         probButton.grid(row=0, column=4)
         self.window.mainloop()
-
 
     def create_main_window(self):
         """Metodas, kuris sukuria pagrindini programos langa ir pradeda lango cikla."""
