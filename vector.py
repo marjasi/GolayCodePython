@@ -1,4 +1,5 @@
 from typing import List
+import copy
 
 
 class Vector:
@@ -23,7 +24,7 @@ class Vector:
         Esminiu elementu skaicius turi buti integer tipo sveikas skaicius.
         """
 
-        self.elements = vectorElements.copy()
+        self.elements = copy.deepcopy(vectorElements)
         self.essentialElemLen = essentialElemLen
 
     def __str__(self):

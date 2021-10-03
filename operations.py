@@ -1,6 +1,7 @@
 from typing import List
 from vector import Vector
 from matrix import Matrix
+import copy
 
 
 def divide_list_to_chunks(listToDivide: List[int], chunkSize: int) -> List[int]:
@@ -100,7 +101,7 @@ def add_for_uneven_weight(vector: Vector) -> Vector:
     Metodas grazina vektoriu addedVector su prirasytu 0 ar 1 .
     """
 
-    addedVector = Vector(vector.elements.copy(), vector.essentialElemLen)
+    addedVector = Vector(copy.deepcopy(vector.elements), vector.essentialElemLen)
 
     if get_vector_weight(addedVector) % 2 == 0:
         addedVector.elements.append(1)

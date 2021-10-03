@@ -1,4 +1,5 @@
 from typing import List
+import copy
 
 
 class Matrix:
@@ -19,7 +20,7 @@ class Matrix:
         matrixRows elementai turi buti masyvai, kuriu elementai yra integer tipo sveikieji skaiciai.
         """
 
-        self.rows = matrixRows.copy()
+        self.rows = copy.deepcopy(matrixRows)
 
     def __str__(self):
         """Metodas skirtas matricos atspausdinimui kvieciant funkcija print().

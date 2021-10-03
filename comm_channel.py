@@ -1,5 +1,6 @@
 from typing import List
 import random
+import copy
 
 
 def distort_binary_info(binaryNumber: int) -> int:
@@ -67,7 +68,7 @@ class CommChannel:
         Metodas grazina masyva binaryInfo, kuriame yra iskraipyti vektoriaus elementai.
         """
 
-        binaryInfo = vectorElements.copy()
+        binaryInfo = copy.deepcopy(vectorElements)
 
         for index, element in enumerate(binaryInfo):
             if random.random() < self.probOfError:
