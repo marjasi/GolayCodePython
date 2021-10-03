@@ -25,16 +25,37 @@ class CommChannel:
         """Konstruktoriaus metodas.
 
         Sukuriamas komunikacijos kanalas su iskraipymo tikimybe probOfError.
+        Parametras probOfError turi buti float tipo realusis skaicius.
         Viena karta inicializuojamas atsitiktiniu skaiciu generatorius.
         """
 
-        self.probOfError = probOfError
+        self.set_prob_of_error(probOfError)
         random.seed()
 
     def set_prob_of_error(self, probOfError: float):
-        """Metodas skirtas naujos iskraipymo tikimybes nustatymui."""
+        """Metodas skirtas naujos iskraipymo tikimybes nustatymui.
+
+        Parametras probOfError turi buti float tipo realusis skaicius.
+        Iskraipymo tikimybe visada bus reiksme priklausanti intervale [0.0, 1.0].
+        Tai yra, paduotos reiksmes nesancios is sio intervalo bus interpretuojamos kaip 1.0 ar 0.0.
+        """
+
+        # Jeigu iskraipymo tikimybe didesne uz 1.0, tai ji ir bus lygi 1.0.
+        if probOfError > 1.0:
+            probOfError = 1.0
+        # Jeigu iskraipymo tikimybe mazesne uz 0.0, tai ji ir bus lygi 0.0.
+        elif probOfError < 0.0:
+            probOfError = 0.0
 
         self.probOfError = probOfError
+
+    def get_prob_of_error(self) -> float:
+        """Metodas, kuris grazina dabartine komunikacijos kanalo iskraipymo tikimybe.
+
+        Grazinama iskraipymo tikimybe yra float tipo realus skaicius.
+        """
+
+        return self.probOfError
 
     def send_binary_info(self, vectorElements: List[int]) -> List[int]:
         """Metodas skirtas binariniu duomenu persiuntimui kanalu.

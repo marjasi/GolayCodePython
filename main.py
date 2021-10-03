@@ -1,17 +1,24 @@
+from golay_execution import GolayExecution
 from golay_window import GolayWindow
 from golay_code import GolayCode
-from vector import Vector
 from comm_channel import CommChannel
-import operations as op
-import text_conversion as txt_conv
-import bmp_conversion as bmp_conv
+
+# Iskraipymo tikimybe yra 0.0 programos pradzioje.
+g_channel = CommChannel(0.0)
+# Golejaus kodo klases incializavimas.
+g_golayCode = GolayCode()
 
 
 def main():
-    golayCode = GolayCode()
-    channel = CommChannel(0.15)
-    window = GolayWindow()
+    # Inicijuojama Golejaus kodo vykdymo klase.
+    golayExecutor = GolayExecution(g_channel, g_golayCode)
+
+    # Golejaus kodo lango klasei perduodama Golejaus kodo vykdymo klase.
+    window = GolayWindow(golayExecutor)
+
+    # Inicijuojamas pradinio lango sukurimas.
     window.create_probability_window()
+
     """bmpBitArray = bmp_conv.bmp_to_bit_array("bmp/testFile1.bmp")
     print(list(op.divide_list_to_chunks(bmpBitArray, 12)))
     bmp_conv.bit_array_to_bmp(bmpBitArray, "bmp/result1.bmp")"""

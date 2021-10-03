@@ -2,6 +2,7 @@
 from tkinter import *
 # Biblioteka naudojama perduoti metodams parametrus spaudziant mygtukus.
 from functools import partial
+from golay_execution import GolayExecution
 
 
 class GolayWindow:
@@ -10,8 +11,19 @@ class GolayWindow:
     Klase apibrezia programos pagrindini langa ir jo elementus bei metodus, kurie dirba su lango elementais.
     """
 
-    # Programos langas. Nebutinai pagrindinis
+    # Programos langas. Nebutinai pagrindinis.
     window = None
+    # Golejaus kodo vykdymo klase.
+    golayExecutor = None
+
+    def __init__(self, golayExecutor: GolayExecution):
+        """Konstruktoriaus metodas.
+
+        GolayWindow klasei perduodama Golejaus kodo vykdymo klase GolayExecution.
+        golayExecutor turi buti GolayExecution klases tipo kintamasis.
+        """
+
+        self.golayExecutor = golayExecutor
 
     def set_window_properties(self, width: int, height: int, title: str, center=True):
         """Metodas, kuris leidzia nurodyti lango ypatybes.
@@ -50,7 +62,7 @@ class GolayWindow:
         # Ivestis ir mygtukas kanalo iskraipymo tikimybei.
         probEntry = Entry(self.window)
         probEntry.grid(row=0, column=0, columnspan=4, padx=50, pady=50)
-        probEntry.insert(0, "0.0")
+        probEntry.insert(0, self.golayExecutor.get_distortion_probability())
         probButton = Button(self.window, padx=50)
         probButton.grid(row=0, column=4)
         self.window.mainloop()
