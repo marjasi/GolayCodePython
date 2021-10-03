@@ -3,6 +3,22 @@ from tkinter import *
 # Biblioteka naudojama perduoti metodams parametrus spaudziant mygtukus.
 from functools import partial
 from golay_execution import GolayExecution
+# Biblioteka naudojama patikrinti ivesciu tinkamuma naudojant regex.
+import re
+
+# if re.fullmatch("[01][01][01][01][01][01][01][01][01][01][01][01]", probEntry.get()) is not None:
+
+
+def update_probability(golayExecutor: GolayExecution, probEntry: Entry):
+    """Metodas, kuris atnaujina kanalo iskraipymo tikimybe.
+
+    golayExecutor turi buti GolayExecution klases tipo kintamasis.
+    probEntry turi buti Entry klases tipo kintamasis.
+    """
+
+    # Gauname ivesties lauko tekstine reiksme ir joje kablelius pakeiciame taskais.
+    probability = probEntry.get().replace(",", ".")
+    golayExecutor.set_distortion_probability(float(probability))
 
 
 class GolayWindow:
@@ -25,12 +41,14 @@ class GolayWindow:
 
         self.golayExecutor = golayExecutor
 
-    def set_window_properties(self, width: int, height: int, title: str, center=True):
+    def set_window_properties(self, width: int, height: int, title: str, columnspan: int, rowspan: int, center=True):
         """Metodas, kuris leidzia nurodyti lango ypatybes.
 
         width yra int tipo sveikasis skaicius, kuris nusako lango ploti pikseliais.
         height yra int tipo sveikasis skaicius, kuris nusako lango auksti pikseliais.
         title yra str tipo kintamasis, kuris nusako lango pavadinima.
+        columnspan yra int tipo sveikasis skaicius, kuris nusako lango lenteles (grid) stulpeliu skaiciu.
+        rowspan yra int tipo sveikasis skaicius, kuris nusako lango lenteles (grid) eiluciu skaiciu.
         center yra bool tipo kintamasis. center pagal nutylejima yra True.
         Jeigu center yra True, tai lango pozicija pakeiciame i ekrano viduri.
         Jeigu center yra False, tai lango pozicija nekeiciama ir langas bus parodomas neapibreztoje
@@ -52,19 +70,25 @@ class GolayWindow:
         else:
             self.window.geometry("%dx%d" % (width, height))
 
+        # Lange esancios nematomos lenteles konfiguracija.
+        Canvas(self.window, width=width, height=height).grid(columnspan=columnspan, rowspan=rowspan)
+
     def create_probability_window(self):
         """Konstruktoriaus metodas, kuris sukuria kanalo tikimybes nurodymo langa."""
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(400, 100, "Channel Distortion")
+        self.set_window_properties(400, 100, "Channel Distortion", 3, 2)
 
-        # Ivestis ir mygtukas kanalo iskraipymo tikimybei.
+        # Ivesties anotacija, ivestis ir mygtukas kanalo iskraipymo tikimybei.
+        entryLabel = Label(self.window, text="Distortion probability:")
+        entryLabel.grid(columnspan=1, row=0, column=0)
         probEntry = Entry(self.window)
-        probEntry.grid(row=0, column=0, columnspan=4, padx=50, pady=50)
+        probEntry.grid(columnspan=1, row=0, column=1)
         probEntry.insert(0, self.golayExecutor.get_distortion_probability())
-        probButton = Button(self.window, padx=50)
-        probButton.grid(row=0, column=4)
+        probButton = Button(self.window, width=12, text="Set Probability",
+                            command=partial(update_probability, self.golayExecutor, probEntry))
+        probButton.grid(columnspan=1, row=1, column=2)
         self.window.mainloop()
 
     def create_main_window(self):
