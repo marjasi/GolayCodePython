@@ -21,7 +21,10 @@ class GolayWindow:
     # Golejaus kodo vykdymo klase.
     golayExecutor = None
 
+    # Mygtuko spalva, kai nebuvo klaidu.
     buttonOkColor = "#9CFD8C"
+
+    # Mygtuko spalva, kai ivyko klaidos.
     buttonErrorColor = "#FF8E8E"
 
     def __init__(self, golayExecutor: GolayExecution):
@@ -105,8 +108,11 @@ class GolayWindow:
         self.window = Tk()
         self.set_window_properties(400, 200, "Send a Vector", 9, 7)
 
+        # Mygtukas grizti atgal i meniu.
         menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
         menuButton.grid(columnspan=1, row=0, column=0)
+
+        # Iskraipymo tikimybes ivestis.
         probLabel = Label(self.window, text="Distortion probability:")
         probLabel.grid(columnspan=2, row=1, column=0)
         probEntry = Entry(self.window)
@@ -124,8 +130,11 @@ class GolayWindow:
         self.window = Tk()
         self.set_window_properties(400, 200, "Send Some Text", 9, 7)
 
+        # Mygtukas grizti atgal i meniu.
         menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
         menuButton.grid(columnspan=1, row=0, column=0)
+
+        # Iskraipymo tikimybes ivestis.
         probLabel = Label(self.window, text="Distortion probability:")
         probLabel.grid(columnspan=2, row=1, column=0)
         probEntry = Entry(self.window)
@@ -143,8 +152,11 @@ class GolayWindow:
         self.window = Tk()
         self.set_window_properties(400, 200, "Send an Image", 13, 9)
 
+        # Mygtukas grizti atgal i meniu.
         menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
         menuButton.grid(columnspan=1, row=0, column=0)
+
+        # Iskraipymo tikimybes ivestis.
         probLabel = Label(self.window, text="Distortion probability:")
         probLabel.grid(columnspan=2, row=1, column=0)
         probEntry = Entry(self.window)
