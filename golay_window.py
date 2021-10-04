@@ -6,20 +6,8 @@ from golay_execution import GolayExecution
 # Biblioteka naudojama patikrinti ivesciu tinkamuma naudojant regex.
 import re
 
+
 # if re.fullmatch("[01][01][01][01][01][01][01][01][01][01][01][01]", probEntry.get()) is not None:
-
-
-def update_probability(golayExecutor: GolayExecution, probEntry: Entry):
-    """Metodas, kuris atnaujina kanalo iskraipymo tikimybe.
-
-    golayExecutor turi buti GolayExecution klases tipo kintamasis.
-    probEntry turi buti Entry klases tipo kintamasis.
-    """
-
-    # Gauname ivesties lauko tekstine reiksme ir joje kablelius pakeiciame taskais.
-    probability = probEntry.get().replace(",", ".")
-    golayExecutor.set_distortion_probability(float(probability))
-
 
 class GolayWindow:
     """Programos grafines vartotojo sasajos klase.
@@ -87,23 +75,52 @@ class GolayWindow:
         probEntry.grid(columnspan=1, row=0, column=1)
         probEntry.insert(0, self.golayExecutor.get_distortion_probability())
         probButton = Button(self.window, width=12, text="Set Probability",
-                            command=partial(update_probability, self.golayExecutor, probEntry))
+                            command=partial(self.update_probability_close_window_open_main, probEntry))
         probButton.grid(columnspan=1, row=1, column=2)
         self.window.mainloop()
 
     def create_main_window(self):
-        """Metodas, kuris sukuria pagrindini programos langa ir pradeda lango cikla."""
+        """Metodas, kuris sukuria pagrindini programos langa."""
 
+        # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.window.geometry("1280x720")
-        self.window.title("Golay Code")
+        self.set_window_properties(1280, 600, "Main Menu", 7, 8)
+
         entry = Entry(self.window)
-        entry.pack()
+        entry.grid(row=0)
         entry.insert(0, "Enter your name:")
-        myButton = Button(self.window, text="Enter your name", command=partial(self.my_click, entry))
-        myButton.pack()
+        myButton = Button(self.window, text="Enter your name")
+        myButton.grid(row=1)
         self.window.mainloop()
 
-    def my_click(self, entry):
-        myLabel = Label(self.window, text="Hello " + entry.get())
-        myLabel.pack()
+    def update_probability(self, probEntry: Entry):
+        """Metodas, kuris atnaujina kanalo iskraipymo tikimybe.
+
+        probEntry turi buti Entry klases tipo kintamasis.
+        probEntry yra ivesties laukas, i kuri buvo ivesta nauja iskraipymo tikimybes reiksme.
+        """
+
+        # Gauname ivesties lauko tekstine reiksme ir joje kablelius pakeiciame taskais.
+        probability = probEntry.get().replace(",", ".")
+        self.golayExecutor.set_distortion_probability(float(probability))
+
+    def close_window(self):
+        """Metodas, kuris uzdaro rodoma langa."""
+
+        self.window.destroy()
+
+    def open_main(self):
+        """Metodas, kuris atidaro pagrindini langa."""
+
+        self.create_main_window()
+
+    def update_probability_close_window_open_main(self, probEntry: Entry):
+        """Metodas, kuris atnaujina kanalo iskraipymo tikimybe, uzdaro langa window ir atidaro pagrindini langa.
+
+        probEntry turi buti Entry klases tipo kintamasis.
+        probEntry yra ivesties laukas, i kuri buvo ivesta nauja iskraipymo tikimybes reiksme.
+        """
+
+        self.update_probability(probEntry)
+        self.close_window()
+        self.open_main()
