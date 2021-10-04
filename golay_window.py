@@ -99,14 +99,10 @@ class GolayWindow:
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(400, 200, "Main Menu", 1, 3)
+        self.set_window_properties(400, 200, "Send a Vector", 4, 3)
 
-        vectorButton = Button(self.window, text="Send a Vector", command=self.close_window_open_vector)
-        vectorButton.grid(row=0, column=0)
-        textButton = Button(self.window, text="Send Some Text", command=self.close_window_open_text)
-        textButton.grid(row=1, column=0)
-        imageButton = Button(self.window, text="Send an Image", command=self.close_window_open_image)
-        imageButton.grid(row=2, column=0)
+        menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
+        menuButton.grid(row=0, column=0)
         self.window.mainloop()
 
     def create_text_window(self):
@@ -114,14 +110,10 @@ class GolayWindow:
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(400, 200, "Main Menu", 1, 3)
+        self.set_window_properties(400, 200, "Send Some Text", 4, 3)
 
-        vectorButton = Button(self.window, text="Send a Vector", command=self.close_window_open_vector)
-        vectorButton.grid(row=0, column=0)
-        textButton = Button(self.window, text="Send Some Text", command=self.close_window_open_text)
-        textButton.grid(row=1, column=0)
-        imageButton = Button(self.window, text="Send an Image", command=self.close_window_open_image)
-        imageButton.grid(row=2, column=0)
+        menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
+        menuButton.grid(row=0, column=0)
         self.window.mainloop()
 
     def create_image_window(self):
@@ -129,14 +121,10 @@ class GolayWindow:
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(400, 200, "Main Menu", 1, 3)
+        self.set_window_properties(400, 200, "Send an Image", 4, 3)
 
-        vectorButton = Button(self.window, text="Send a Vector", command=self.close_window_open_vector)
-        vectorButton.grid(row=0, column=0)
-        textButton = Button(self.window, text="Send Some Text", command=self.close_window_open_text)
-        textButton.grid(row=1, column=0)
-        imageButton = Button(self.window, text="Send an Image", command=self.close_window_open_image)
-        imageButton.grid(row=2, column=0)
+        menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
+        menuButton.grid(row=0, column=0)
         self.window.mainloop()
 
     def close_window(self):
