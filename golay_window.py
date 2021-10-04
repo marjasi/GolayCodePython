@@ -1,14 +1,14 @@
 # Biblioteka skirta grafinei vartotojo sasajai sukurti.
-import tkinter
 from tkinter import *
+from tkinter.scrolledtext import ScrolledText
 # Biblioteka naudojama perduoti metodams parametrus spaudziant mygtukus.
 from functools import partial
 from golay_execution import GolayExecution
 # Biblioteka naudojama patikrinti ivesciu tinkamuma naudojant regex.
 import re
 
-
 # if re.fullmatch("[01][01][01][01][01][01][01][01][01][01][01][01]", probEntry.get()) is not None:
+
 
 class GolayWindow:
     """Programos grafines vartotojo sasajos klase.
@@ -76,7 +76,7 @@ class GolayWindow:
         self.set_window_properties(400, 100, "Channel Distortion", 3, 2)
 
         # Ivesties anotacija, ivestis ir mygtukas kanalo iskraipymo tikimybei.
-        entryLabel = Label(self.window, text="Distortion probability:")
+        entryLabel = Label(self.window, text="Distortion Probability:")
         entryLabel.grid(columnspan=1, row=0, column=0)
         probEntry = Entry(self.window)
         probEntry.grid(columnspan=1, row=0, column=1)
@@ -106,21 +106,53 @@ class GolayWindow:
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(400, 200, "Send a Vector", 9, 7)
+        self.set_window_properties(1200, 500, "Send a Vector", 11, 14)
 
         # Mygtukas grizti atgal i meniu.
         menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
         menuButton.grid(columnspan=1, row=0, column=0)
 
         # Iskraipymo tikimybes ivestis.
-        probLabel = Label(self.window, text="Distortion probability:")
-        probLabel.grid(columnspan=2, row=1, column=0)
+        probLabel = Label(self.window, text="Distortion Probability:")
+        probLabel.grid(columnspan=2, row=2, column=0)
         probEntry = Entry(self.window)
-        probEntry.grid(columnspan=2, row=1, column=2)
+        probEntry.grid(columnspan=2, row=2, column=2)
         probEntry.insert(0, self.golayExecutor.get_distortion_probability())
         probButton = Button(self.window, width=12, text="Set Probability")
         probButton.configure(command=partial(self.button_color_update_probability, probButton, probEntry))
-        probButton.grid(columnspan=1, row=2, column=4)
+        probButton.grid(columnspan=1, row=4, column=4)
+
+        # Vektoriaus ivestis.
+        vectorInputLabel = Label(self.window, text="Vector To Send:")
+        vectorInputLabel.grid(columnspan=2, row=6, column=0)
+        vectorInputEntry = Entry(self.window)
+        vectorInputEntry.grid(columnspan=2, row=6, column=2)
+        vectorInputButton = Button(self.window, width=13, text="Encode and Send")
+        vectorInputButton.grid(columnspan=1, row=7, column=4)
+
+        # Gauto is kanalo vektoriaus keitimas.
+        distVectorLabel = Label(self.window, text="Received Vector:")
+        distVectorLabel.grid(columnspan=2, row=9, column=0)
+        distVectorEntry = Entry(self.window)
+        distVectorEntry.grid(columnspan=2, row=9, column=2)
+        distVectorErrorLabel = Label(self.window, text="Mistakes: ")
+        distVectorErrorLabel.grid(columnspan=2, row=10, column=0)
+        distVectorButton = Button(self.window, width=12, text="Decode")
+        distVectorButton.grid(columnspan=1, row=10, column=4)
+
+        # Dekoduotas vektorius.
+        decodedVectorLabel = Label(self.window, text="Decoded Vector:")
+        decodedVectorLabel.grid(columnspan=2, row=2, column=6)
+        decodedVectorEntry = Entry(self.window, state="disabled")
+        decodedVectorEntry.grid(columnspan=2, row=2, column=8)
+
+        # Algoritmo veikimo israsas.
+        algorithmLogLabel = Label(self.window, text="Algorithm Log:")
+        algorithmLogLabel.grid(columnspan=2, row=5, column=6)
+        algorithmLogText = ScrolledText(self.window, width=60)
+        algorithmLogText.grid(columnspan=4, rowspan=7, row=6, column=6)
+
+        # Inicializuojamas lango veikimo ciklas.
         self.window.mainloop()
 
     def create_text_window(self):
@@ -135,7 +167,7 @@ class GolayWindow:
         menuButton.grid(columnspan=1, row=0, column=0)
 
         # Iskraipymo tikimybes ivestis.
-        probLabel = Label(self.window, text="Distortion probability:")
+        probLabel = Label(self.window, text="Distortion Probability:")
         probLabel.grid(columnspan=2, row=1, column=0)
         probEntry = Entry(self.window)
         probEntry.grid(columnspan=2, row=1, column=2)
@@ -143,6 +175,8 @@ class GolayWindow:
         probButton = Button(self.window, width=12, text="Set Probability")
         probButton.configure(command=partial(self.button_color_update_probability, probButton, probEntry))
         probButton.grid(columnspan=1, row=2, column=4)
+
+        # Inicializuojamas lango veikimo ciklas.
         self.window.mainloop()
 
     def create_image_window(self):
@@ -157,7 +191,7 @@ class GolayWindow:
         menuButton.grid(columnspan=1, row=0, column=0)
 
         # Iskraipymo tikimybes ivestis.
-        probLabel = Label(self.window, text="Distortion probability:")
+        probLabel = Label(self.window, text="Distortion Probability:")
         probLabel.grid(columnspan=2, row=1, column=0)
         probEntry = Entry(self.window)
         probEntry.grid(columnspan=2, row=1, column=2)
@@ -165,6 +199,8 @@ class GolayWindow:
         probButton = Button(self.window, width=12, text="Set Probability")
         probButton.configure(command=partial(self.button_color_update_probability, probButton, probEntry))
         probButton.grid(columnspan=1, row=2, column=4)
+
+        # Inicializuojamas lango veikimo ciklas.
         self.window.mainloop()
 
     def close_window(self):
@@ -199,7 +235,7 @@ class GolayWindow:
         """
 
         # Istriname visa entry esanti teksta.
-        entry.delete(0, tkinter.END)
+        entry.delete(0, END)
 
         # Idedame nauja teksta entryText.
         entry.insert(0, entryText)
