@@ -1,4 +1,5 @@
 # Biblioteka skirta grafinei vartotojo sasajai sukurti.
+import tkinter
 from tkinter import *
 # Biblioteka naudojama perduoti metodams parametrus spaudziant mygtukus.
 from functools import partial
@@ -19,6 +20,9 @@ class GolayWindow:
     window = None
     # Golejaus kodo vykdymo klase.
     golayExecutor = None
+
+    buttonOkColor = "#9CFD8C"
+    buttonErrorColor = "#FF8E8E"
 
     def __init__(self, golayExecutor: GolayExecution):
         """Konstruktoriaus metodas.
@@ -87,11 +91,11 @@ class GolayWindow:
         self.set_window_properties(400, 200, "Main Menu", 1, 3)
 
         vectorButton = Button(self.window, text="Send a Vector", command=self.close_window_open_vector)
-        vectorButton.grid(row=0, column=0)
+        vectorButton.grid(columnspan=1, row=0, column=0)
         textButton = Button(self.window, text="Send Some Text", command=self.close_window_open_text)
-        textButton.grid(row=1, column=0)
+        textButton.grid(columnspan=1, row=1, column=0)
         imageButton = Button(self.window, text="Send an Image", command=self.close_window_open_image)
-        imageButton.grid(row=2, column=0)
+        imageButton.grid(columnspan=1, row=2, column=0)
         self.window.mainloop()
 
     def create_vector_window(self):
@@ -99,10 +103,18 @@ class GolayWindow:
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(400, 200, "Send a Vector", 4, 3)
+        self.set_window_properties(400, 200, "Send a Vector", 9, 7)
 
         menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
-        menuButton.grid(row=0, column=0)
+        menuButton.grid(columnspan=1, row=0, column=0)
+        probLabel = Label(self.window, text="Distortion probability:")
+        probLabel.grid(columnspan=2, row=1, column=0)
+        probEntry = Entry(self.window)
+        probEntry.grid(columnspan=2, row=1, column=2)
+        probEntry.insert(0, self.golayExecutor.get_distortion_probability())
+        probButton = Button(self.window, width=12, text="Set Probability")
+        probButton.configure(command=partial(self.button_color_update_probability, probButton, probEntry))
+        probButton.grid(columnspan=1, row=2, column=4)
         self.window.mainloop()
 
     def create_text_window(self):
@@ -110,10 +122,18 @@ class GolayWindow:
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(400, 200, "Send Some Text", 4, 3)
+        self.set_window_properties(400, 200, "Send Some Text", 9, 7)
 
         menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
-        menuButton.grid(row=0, column=0)
+        menuButton.grid(columnspan=1, row=0, column=0)
+        probLabel = Label(self.window, text="Distortion probability:")
+        probLabel.grid(columnspan=2, row=1, column=0)
+        probEntry = Entry(self.window)
+        probEntry.grid(columnspan=2, row=1, column=2)
+        probEntry.insert(0, self.golayExecutor.get_distortion_probability())
+        probButton = Button(self.window, width=12, text="Set Probability")
+        probButton.configure(command=partial(self.button_color_update_probability, probButton, probEntry))
+        probButton.grid(columnspan=1, row=2, column=4)
         self.window.mainloop()
 
     def create_image_window(self):
@@ -121,10 +141,18 @@ class GolayWindow:
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(400, 200, "Send an Image", 4, 3)
+        self.set_window_properties(400, 200, "Send an Image", 13, 9)
 
         menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
-        menuButton.grid(row=0, column=0)
+        menuButton.grid(columnspan=1, row=0, column=0)
+        probLabel = Label(self.window, text="Distortion probability:")
+        probLabel.grid(columnspan=2, row=1, column=0)
+        probEntry = Entry(self.window)
+        probEntry.grid(columnspan=2, row=1, column=2)
+        probEntry.insert(0, self.golayExecutor.get_distortion_probability())
+        probButton = Button(self.window, width=12, text="Set Probability")
+        probButton.configure(command=partial(self.button_color_update_probability, probButton, probEntry))
+        probButton.grid(columnspan=1, row=2, column=4)
         self.window.mainloop()
 
     def close_window(self):
@@ -132,16 +160,54 @@ class GolayWindow:
 
         self.window.destroy()
 
-    def update_probability(self, probEntry: Entry):
+    def update_probability(self, probEntry: Entry) -> bool:
         """Metodas, kuris atnaujina kanalo iskraipymo tikimybe.
 
         probEntry turi buti Entry klases tipo kintamasis.
         probEntry yra ivesties laukas, i kuri buvo ivesta nauja iskraipymo tikimybes reiksme.
+        Metodas grazina bool tipo reiksme, kuri nurodo, ar buvo sekmingai pakeista iskraipymo tikimybe
         """
 
         # Gauname ivesties lauko tekstine reiksme ir joje kablelius pakeiciame taskais.
         probability = probEntry.get().replace(",", ".")
-        self.golayExecutor.set_distortion_probability(float(probability))
+
+        # Jeigu ivyko klaida ir reiksme negalejo buti konvertuota i realu skaiciu, graziname False.
+        # Kitu atveju graziname True.
+        try:
+            self.golayExecutor.set_distortion_probability(float(probability))
+        except ValueError:
+            return False
+        return True
+
+    def set_entry_text(self, entry: Entry, entryText: str):
+        """Metodas, kuris pakeicia ivesties lauke entry esanti teksta i entryText.
+
+        entry turi buti Entry klases tipo kintamasis.
+        entryText turi buti str tipo kintamasis.
+        """
+
+        # Istriname visa entry esanti teksta.
+        entry.delete(0, tkinter.END)
+
+        # Idedame nauja teksta entryText.
+        entry.insert(0, entryText)
+
+    def button_color_update_probability(self, button: Button, probEntry: Entry):
+        """Metodas, kuris atnaujina kanalo iskraipymo tikimybe ir pakeicia mygtuko spalva.
+
+        button turi buti Button klases tipo kintamasis.
+        button yra mygtukas, kuris bus nudazytas zaliai arba raudonai.
+        probEntry turi buti Entry klases tipo kintamasis.
+        probEntry yra ivesties laukas, i kuri buvo ivesta nauja iskraipymo tikimybes reiksme.
+        """
+
+        if self.update_probability(probEntry):
+            # Iskraipymo tikimybe pakeista.
+            self.set_entry_text(probEntry, str(self.golayExecutor.get_distortion_probability()))
+            button.configure(bg=self.buttonOkColor)
+        else:
+            # Nepavyko pakeisti iskraipymo tikimybes.
+            button.configure(bg=self.buttonErrorColor)
 
     def update_probability_close_window_open_main(self, probEntry: Entry):
         """Metodas, kuris atnaujina kanalo iskraipymo tikimybe, uzdaro rodoma langa ir atidaro pagrindini langa.
@@ -150,9 +216,9 @@ class GolayWindow:
         probEntry yra ivesties laukas, i kuri buvo ivesta nauja iskraipymo tikimybes reiksme.
         """
 
-        self.update_probability(probEntry)
-        self.close_window()
-        self.create_main_window()
+        if self.update_probability(probEntry):
+            self.close_window()
+            self.create_main_window()
 
     def close_window_open_main(self):
         """Metodas, kuris uzdaro rodoma langa ir atidaro pagrindini langa."""
