@@ -84,14 +84,65 @@ class GolayWindow:
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(1280, 600, "Main Menu", 7, 8)
+        self.set_window_properties(400, 200, "Main Menu", 1, 3)
 
-        entry = Entry(self.window)
-        entry.grid(row=0)
-        entry.insert(0, "Enter your name:")
-        myButton = Button(self.window, text="Enter your name")
-        myButton.grid(row=1)
+        vectorButton = Button(self.window, text="Send a Vector", command=self.close_window_open_vector)
+        vectorButton.grid(row=0, column=0)
+        textButton = Button(self.window, text="Send Some Text", command=self.close_window_open_text)
+        textButton.grid(row=1, column=0)
+        imageButton = Button(self.window, text="Send an Image", command=self.close_window_open_image)
+        imageButton.grid(row=2, column=0)
         self.window.mainloop()
+
+    def create_vector_window(self):
+        """Metodas, kuris sukuria pirmo scenarijaus langa."""
+
+        # Lango sukurimas ir ypatybes.
+        self.window = Tk()
+        self.set_window_properties(400, 200, "Main Menu", 1, 3)
+
+        vectorButton = Button(self.window, text="Send a Vector", command=self.close_window_open_vector)
+        vectorButton.grid(row=0, column=0)
+        textButton = Button(self.window, text="Send Some Text", command=self.close_window_open_text)
+        textButton.grid(row=1, column=0)
+        imageButton = Button(self.window, text="Send an Image", command=self.close_window_open_image)
+        imageButton.grid(row=2, column=0)
+        self.window.mainloop()
+
+    def create_text_window(self):
+        """Metodas, kuris sukuria antro scenarijaus langa."""
+
+        # Lango sukurimas ir ypatybes.
+        self.window = Tk()
+        self.set_window_properties(400, 200, "Main Menu", 1, 3)
+
+        vectorButton = Button(self.window, text="Send a Vector", command=self.close_window_open_vector)
+        vectorButton.grid(row=0, column=0)
+        textButton = Button(self.window, text="Send Some Text", command=self.close_window_open_text)
+        textButton.grid(row=1, column=0)
+        imageButton = Button(self.window, text="Send an Image", command=self.close_window_open_image)
+        imageButton.grid(row=2, column=0)
+        self.window.mainloop()
+
+    def create_image_window(self):
+        """Metodas, kuris sukuria trecio scenarijaus langa."""
+
+        # Lango sukurimas ir ypatybes.
+        self.window = Tk()
+        self.set_window_properties(400, 200, "Main Menu", 1, 3)
+
+        vectorButton = Button(self.window, text="Send a Vector", command=self.close_window_open_vector)
+        vectorButton.grid(row=0, column=0)
+        textButton = Button(self.window, text="Send Some Text", command=self.close_window_open_text)
+        textButton.grid(row=1, column=0)
+        imageButton = Button(self.window, text="Send an Image", command=self.close_window_open_image)
+        imageButton.grid(row=2, column=0)
+        self.window.mainloop()
+
+    def close_window(self):
+        """Metodas, kuris uzdaro rodoma langa."""
+
+        self.window.destroy()
 
     def update_probability(self, probEntry: Entry):
         """Metodas, kuris atnaujina kanalo iskraipymo tikimybe.
@@ -104,18 +155,8 @@ class GolayWindow:
         probability = probEntry.get().replace(",", ".")
         self.golayExecutor.set_distortion_probability(float(probability))
 
-    def close_window(self):
-        """Metodas, kuris uzdaro rodoma langa."""
-
-        self.window.destroy()
-
-    def open_main(self):
-        """Metodas, kuris atidaro pagrindini langa."""
-
-        self.create_main_window()
-
     def update_probability_close_window_open_main(self, probEntry: Entry):
-        """Metodas, kuris atnaujina kanalo iskraipymo tikimybe, uzdaro langa window ir atidaro pagrindini langa.
+        """Metodas, kuris atnaujina kanalo iskraipymo tikimybe, uzdaro rodoma langa ir atidaro pagrindini langa.
 
         probEntry turi buti Entry klases tipo kintamasis.
         probEntry yra ivesties laukas, i kuri buvo ivesta nauja iskraipymo tikimybes reiksme.
@@ -123,4 +164,28 @@ class GolayWindow:
 
         self.update_probability(probEntry)
         self.close_window()
-        self.open_main()
+        self.create_main_window()
+
+    def close_window_open_main(self):
+        """Metodas, kuris uzdaro rodoma langa ir atidaro pagrindini langa."""
+
+        self.close_window()
+        self.create_main_window()
+
+    def close_window_open_vector(self):
+        """Metodas, kuris uzdaro rodoma langa ir atidaro pirmo scenarijaus langa."""
+
+        self.close_window()
+        self.create_vector_window()
+
+    def close_window_open_text(self):
+        """Metodas, kuris uzdaro rodoma langa ir atidaro antro scenarijaus langa."""
+
+        self.close_window()
+        self.create_text_window()
+
+    def close_window_open_image(self):
+        """Metodas, kuris uzdaro rodoma langa ir atidaro trecio scenarijaus langa."""
+
+        self.close_window()
+        self.create_image_window()
