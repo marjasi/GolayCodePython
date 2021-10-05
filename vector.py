@@ -27,6 +27,19 @@ class Vector:
         self.elements = copy.deepcopy(vectorElements)
         self.essentialElemLen = essentialElemLen
 
+    def get_elements_as_string(self) -> str:
+        """Metodas, kuris grazina vektoriaus elementus sudetus i tesktine eilute.
+
+        Metodas grazina str tipo teksto eilute, kurioje yra sudeti vektoriaus elementai.
+        """
+
+        vectorElements = ""
+
+        for element in self.elements:
+            vectorElements += str(element)
+
+        return vectorElements
+
     def __str__(self):
         """Metodas skirtas vektoriaus atspausdinimui kvieciant funkcija print().
 

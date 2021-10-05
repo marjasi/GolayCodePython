@@ -4,6 +4,7 @@ from tkinter.scrolledtext import ScrolledText
 # Biblioteka naudojama perduoti metodams parametrus spaudziant mygtukus.
 from functools import partial
 from golay_execution import GolayExecution
+import operations as op
 # Biblioteka naudojama patikrinti ivesciu tinkamuma naudojant regex.
 import re
 
@@ -150,36 +151,49 @@ class GolayWindow:
         probButton.configure(command=partial(self.button_color_update_probability, probButton, probEntry))
         probButton.grid(columnspan=1, row=4, column=4)
 
+        # Uzkoduotas vektorius.
+        encodedVectorLabel = Label(self.window, text="Encoded Vector:")
+        encodedVectorLabel.grid(columnspan=2, row=8, column=0)
+        encodedVectorEntry = Entry(self.window, state="readonly", width=25)
+        encodedVectorEntry.grid(columnspan=2, row=8, column=2)
+
+        # Kanale ivykusios klaidos.
+        distVectorErrorLabel = Label(self.window, text="Mistakes: ")
+        distVectorErrorLabel.grid(columnspan=2, row=10, column=0)
+        distVectorErrorEntry = Entry(self.window, state="disabled", width=4, justify="center")
+        distVectorErrorEntry.grid(columnspan=2, row=10, column=2)
+
+        # Gauto is kanalo vektoriaus ivestis.
+        distVectorEntry = Entry(self.window, width=25)
+        distVectorEntry.grid(columnspan=2, row=9, column=2)
+
         # Vektoriaus ivestis.
         vectorInputLabel = Label(self.window, text="Vector To Send:")
         vectorInputLabel.grid(columnspan=2, row=6, column=0)
         vectorInputEntry = Entry(self.window)
         vectorInputEntry.grid(columnspan=2, row=6, column=2)
         vectorInputButton = Button(self.window, width=13, text="Encode and Send")
-        vectorInputButton.configure(command=partial(self.encode_send_vector, vectorInputButton, vectorInputEntry))
+        vectorInputButton.configure(command=partial(self.encode_send_vector, vectorInputButton, vectorInputEntry,
+                                                    encodedVectorEntry, distVectorEntry, distVectorErrorEntry))
         vectorInputButton.grid(columnspan=1, row=7, column=4)
 
         # Gauto is kanalo vektoriaus keitimas.
         distVectorLabel = Label(self.window, text="Received Vector:")
         distVectorLabel.grid(columnspan=2, row=9, column=0)
-        distVectorEntry = Entry(self.window)
-        distVectorEntry.grid(columnspan=2, row=9, column=2)
-        distVectorErrorLabel = Label(self.window, text="Mistakes: ")
-        distVectorErrorLabel.grid(columnspan=2, row=10, column=0)
         distVectorButton = Button(self.window, width=12, text="Decode")
         distVectorButton.grid(columnspan=1, row=10, column=4)
 
         # Dekoduotas vektorius.
         decodedVectorLabel = Label(self.window, text="Decoded Vector:")
-        decodedVectorLabel.grid(columnspan=2, row=2, column=6)
-        decodedVectorEntry = Entry(self.window, state="disabled")
-        decodedVectorEntry.grid(columnspan=2, row=2, column=8)
+        decodedVectorLabel.grid(columnspan=2, row=11, column=0)
+        decodedVectorEntry = Entry(self.window, state="readonly", width=25)
+        decodedVectorEntry.grid(columnspan=2, row=11, column=2)
 
         # Algoritmo veikimo israsas.
         algorithmLogLabel = Label(self.window, text="Algorithm Log:")
-        algorithmLogLabel.grid(columnspan=2, row=5, column=6)
+        algorithmLogLabel.grid(columnspan=2, row=1, column=6)
         algorithmLogText = ScrolledText(self.window, width=60)
-        algorithmLogText.grid(columnspan=4, rowspan=7, row=6, column=6)
+        algorithmLogText.grid(columnspan=4, rowspan=9, row=2, column=6)
 
         # Inicializuojamas lango veikimo ciklas.
         self.window.mainloop()
@@ -256,7 +270,8 @@ class GolayWindow:
             return False
         return True
 
-    def encode_send_vector(self, button: Button, vectorEntry: Entry):
+    def encode_send_vector(self, button: Button, vectorEntry: Entry, encodedVectorEntry: Entry,
+                           distortedVectorEntry: Entry, mistakeEntry: Entry):
         """Metodas, kuris uzkoduoja ivesta vektoriu ir siuncia ji per komunikacijos kanalo.
 
         Pries vektoriu uzkoduojant, patikrinama, ar vartotojas ivede tinkamo ilgio ir turinio vektoriu.
@@ -264,6 +279,12 @@ class GolayWindow:
         button yra mygtukas, kuris inicijuoja si metoda.
         vectorEntry turi buti Entry klases tipo kintamasis.
         vectorEntry yra vektoriaus, kuri norime uzkoduoti ir siusti kanalu, elementu ivestis.
+        encodedVectorEntry turi buti Entry klases tipo kintamasis.
+        encodedVectorEntry yra uzkoduoto vektoriaus parodymo ivestis.
+        distortedVectorEntry turi buti Entry klases tipo kintamasis.
+        distortedVectorEntry yra iskraipyto vektoriaus parodymo ivestis.
+        mistakeEntry yra Entry klases tipo kintamasis.
+        mistakeEntry yra kanale padarytu klaidu skaiciaus parodymo ivestis.
         """
 
         # Jeigu buvo ivestas netinkamas vektorius, mygtukas nudazomas raudonai.
@@ -272,6 +293,25 @@ class GolayWindow:
         # Kitu atveju, mygtukas nudazomas zaliai ir toliau vykdomas metodas.
         else:
             button.configure(bg=self.buttonOkColor)
+
+            # Uzkoduojamas vektorius.
+            inputVector = op.create_vector_from_string(vectorEntry.get())
+            encodedVector = self.golayExecutor.encode_vector(inputVector)
+
+            # Parodoma uzkoduoto vektoriaus reiksme.
+            encodedVectorEntry.configure(state="normal")
+            set_entry_text(encodedVectorEntry, encodedVector.get_elements_as_string())
+            encodedVectorEntry.configure(state="readonly")
+
+            # Uzkoduotas vektorius siunciamas kanalu.
+            receivedVector = self.golayExecutor.send_vector(encodedVector)
+            set_entry_text(distortedVectorEntry, receivedVector.get_elements_as_string())
+
+            # Suskaiciuojamos padarytos klaidos ir parodomas klaidu skaicius.
+            resultTuple = self.golayExecutor.get_error_num_positions(encodedVector, receivedVector)
+            mistakeEntry.configure(state="normal")
+            set_entry_text(mistakeEntry, str(resultTuple[0]))
+            mistakeEntry.configure(state="disabled")
 
     def button_color_update_probability(self, button: Button, probEntry: Entry):
         """Metodas, kuris atnaujina kanalo iskraipymo tikimybe ir pakeicia mygtuko spalva.
