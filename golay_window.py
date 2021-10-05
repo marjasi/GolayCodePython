@@ -32,7 +32,7 @@ def check_vector_regex(vectorString: str) -> bool:
     regex formatas apibrezia ilgio 12 vektoriu, kuri sudaro elementai 0 ar 1.
     """
 
-    if re.fullmatch("[01][01][01][01][01][01][01][01][01][01][01][01]", vectorString) is not None:
+    if re.fullmatch("[01]{12}", vectorString) is not None:
         return True
     else:
         return False
@@ -156,6 +156,7 @@ class GolayWindow:
         vectorInputEntry = Entry(self.window)
         vectorInputEntry.grid(columnspan=2, row=6, column=2)
         vectorInputButton = Button(self.window, width=13, text="Encode and Send")
+        vectorInputButton.configure(command=partial(self.encode_send_vector, vectorInputButton, vectorInputEntry))
         vectorInputButton.grid(columnspan=1, row=7, column=4)
 
         # Gauto is kanalo vektoriaus keitimas.
@@ -254,6 +255,23 @@ class GolayWindow:
         except ValueError:
             return False
         return True
+
+    def encode_send_vector(self, button: Button, vectorEntry: Entry):
+        """Metodas, kuris uzkoduoja ivesta vektoriu ir siuncia ji per komunikacijos kanalo.
+
+        Pries vektoriu uzkoduojant, patikrinama, ar vartotojas ivede tinkamo ilgio ir turinio vektoriu.
+        button turi buti Button klases tipo kintamasis.
+        button yra mygtukas, kuris inicijuoja si metoda.
+        vectorEntry turi buti Entry klases tipo kintamasis.
+        vectorEntry yra vektoriaus, kuri norime uzkoduoti ir siusti kanalu, elementu ivestis.
+        """
+
+        # Jeigu buvo ivestas netinkamas vektorius, mygtukas nudazomas raudonai.
+        if not check_vector_regex(vectorEntry.get()):
+            button.configure(bg=self.buttonErrorColor)
+        # Kitu atveju, mygtukas nudazomas zaliai ir toliau vykdomas metodas.
+        else:
+            button.configure(bg=self.buttonOkColor)
 
     def button_color_update_probability(self, button: Button, probEntry: Entry):
         """Metodas, kuris atnaujina kanalo iskraipymo tikimybe ir pakeicia mygtuko spalva.

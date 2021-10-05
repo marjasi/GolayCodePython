@@ -1,6 +1,7 @@
 from comm_channel import CommChannel
 from golay_code import GolayCode
 from vector import Vector
+from typing import List
 import operations as op
 import text_conversion as txt_conv
 import bmp_conversion as bmp_conv
@@ -39,3 +40,50 @@ class GolayExecution:
         """
 
         return self.commChannel.set_prob_of_error(distortionProbability)
+
+    def encode_vector(self, vector: Vector) -> Vector:
+        """Metodas, kuris uzkoduoja paduota vektoriu vector.
+
+        vector turi buti Vector klases tipo kintamasis.
+        Metodas grazina nauja Vector klases vektoriu, kuris yra uzkoduotas.
+        """
+
+        encodedVector = self.golayCode.encode_vector(vector)
+        return encodedVector
+
+    def send_vector(self, vector: Vector) -> Vector:
+        """Metodas, kuris komunikacijos kanalu nusiuncia vektoriu vector ir grazina is kanalo gauta vektoriu.
+
+        vector turi buti Vector klases tipo kintamasis.
+        Metodas grazina is kanalo gauta Vector klases vektoriu.
+        """
+
+        receivedVector = Vector(self.commChannel.send_binary_info(vector.elements), vector.essentialElemLen)
+        return receivedVector
+
+    def get_error_num_positions(self, encodedVector: Vector, receivedVector: Vector, increasePositionValues=False)\
+            -> tuple[int, List[int]]:
+        """Metodas, kuris suskaiciuoja, kiek yra skirtumu tarp dvieju vektoriu ir pateikia,
+            kuriose vietose yra tie skirtumai.
+
+        encodedVector turi buti Vector klases tipo kintamasis.
+        encodedVector yra uzkoduotas vektorius, kuris dar nebuvo siustas kanalu.
+        receivedVector turi buti Vector klases tipo kintamasis.
+        receivedVector yra jau kanalu siustas ir is kanalo gautas vektorius.
+        increasePositionValues turi buti bool tipo kintamasis.
+        Pagal nutylejima increasePositionValues yra False.
+        Jeigu increasePositionValues yra True, tai poziciju skaiciai bus padidinti vienetu ir tiks atveju, jeigu
+         pirmoji pozicija yra nuo vieneto.
+        Jeigu increasePositionValues yra False, tai poziciju skaiciui nebus padidinti vienetu, pirma pozicija bus
+         nuo nulio.
+        Metodas grazina rezultatu rinkini, kurio pirmas elementas yra klaidu skaicius, o antras elementas yra pozicijos,
+         kuriose ivyko klaidos.
+        """
+
+        vectorErrorNum = op.get_vector_errors(encodedVector, receivedVector)
+        vectorErrorPos = op.get_vector_error_positions(encodedVector, receivedVector)
+
+        if increasePositionValues:
+            op.increase_list_values(vectorErrorPos, 1)
+
+        return vectorErrorNum, vectorErrorPos
