@@ -51,6 +51,25 @@ def remove_last_vector_element(vector: Vector):
         del vector.elements[-1]
 
 
+def create_vector_from_string(bitString: str) -> Vector:
+    """Metodas, kuris sukuria nauja Vector klases objetkaa pagal reiksmes esancias bitString tekste.
+
+    bitString turi buti str tipo kintamasis.
+    Metodas grazina Vector klases tipo objekta.
+    """
+
+    # Vektoriaus elementai.
+    vectorElements = []
+
+    for char in bitString:
+        if char == "1":
+            vectorElements.append(1)
+        elif char == "0":
+            vectorElements.append(0)
+
+    return Vector(vectorElements, len(vectorElements))
+
+
 def fill_vector_zeros(vector: Vector):
     """Metodas, kuris pripildo vektoriu vector nuliais iki 12 ilgio.
 

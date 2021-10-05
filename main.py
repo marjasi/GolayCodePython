@@ -1,3 +1,4 @@
+import operations
 from golay_execution import GolayExecution
 from golay_window import GolayWindow
 from golay_code import GolayCode
