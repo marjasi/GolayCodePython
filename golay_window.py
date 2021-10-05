@@ -7,7 +7,35 @@ from golay_execution import GolayExecution
 # Biblioteka naudojama patikrinti ivesciu tinkamuma naudojant regex.
 import re
 
-# if re.fullmatch("[01][01][01][01][01][01][01][01][01][01][01][01]", probEntry.get()) is not None:
+
+def set_entry_text(entry: Entry, entryText: str):
+    """Metodas, kuris pakeicia ivesties lauke entry esanti teksta i entryText.
+
+    entry turi buti Entry klases tipo kintamasis.
+    entryText turi buti str tipo kintamasis.
+    """
+
+    # Istriname visa entry esanti teksta.
+    entry.delete(0, END)
+
+    # Idedame nauja teksta entryText.
+    entry.insert(0, entryText)
+
+
+def check_vector_regex(vectorString: str) -> bool:
+    """Metodas, kuris patikrina vektoriaus ilgi ir turini pagal nurodyta regex formata.
+
+    vectorString turi buti str tipo kintamasis.
+    Metodas grazina bool tipo kintamaji.
+    Grazinama True, jeigu vectorString tenkina regex formata.
+    Grazinama False, jeigu vectorString netenkina regex formato.
+    regex formatas apibrezia ilgio 12 vektoriu, kuri sudaro elementai 0 ar 1.
+    """
+
+    if re.fullmatch("[01][01][01][01][01][01][01][01][01][01][01][01]", vectorString) is not None:
+        return True
+    else:
+        return False
 
 
 class GolayWindow:
@@ -227,19 +255,6 @@ class GolayWindow:
             return False
         return True
 
-    def set_entry_text(self, entry: Entry, entryText: str):
-        """Metodas, kuris pakeicia ivesties lauke entry esanti teksta i entryText.
-
-        entry turi buti Entry klases tipo kintamasis.
-        entryText turi buti str tipo kintamasis.
-        """
-
-        # Istriname visa entry esanti teksta.
-        entry.delete(0, END)
-
-        # Idedame nauja teksta entryText.
-        entry.insert(0, entryText)
-
     def button_color_update_probability(self, button: Button, probEntry: Entry):
         """Metodas, kuris atnaujina kanalo iskraipymo tikimybe ir pakeicia mygtuko spalva.
 
@@ -251,7 +266,7 @@ class GolayWindow:
 
         if self.update_probability(probEntry):
             # Iskraipymo tikimybe pakeista.
-            self.set_entry_text(probEntry, str(self.golayExecutor.get_distortion_probability()))
+            set_entry_text(probEntry, str(self.golayExecutor.get_distortion_probability()))
             button.configure(bg=self.buttonOkColor)
         else:
             # Nepavyko pakeisti iskraipymo tikimybes.
