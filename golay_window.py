@@ -24,7 +24,7 @@ def set_entry_text(entry: Entry, entryText: str):
 
 
 def set_scrolled_text_area_text(scrolledTextArea: ScrolledText, areaText: str):
-    """Metodas, kuris pakeicia ivesties sriytje scrolledTextArea esanti teksta i areaText.
+    """Metodas, kuris pakeicia ivesties srityje scrolledTextArea esanti teksta i areaText.
 
     scrolledTextArea turi buti ScrolledText klases tipo kintamasis.
     areaText turi buti str tipo kintamasis.
@@ -35,6 +35,18 @@ def set_scrolled_text_area_text(scrolledTextArea: ScrolledText, areaText: str):
 
     # Idedame nauja teksta areaText.
     scrolledTextArea.insert(1.0, areaText)
+
+
+def get_scrolled_text_area_text(scrolledTextArea: ScrolledText) -> str:
+    """Metodas, kuris grazina ivesties srityje scrolledTextArea esanti teksta.
+
+    scrolledTextArea turi buti ScrolledText klases tipo kintamasis.
+    Metodas grazina ivesties srityje esanti teksta str tipo kintamuoju.
+    """
+
+    # Gauname visa teksta esanti ivesties srityje.
+    # Atmetame viena simboli nuo galo, kad nepaimtume papildomo '\n' simbolio.
+    return scrolledTextArea.get(1.0, "end-1c")
 
 
 def check_vector_regex(vectorString: str) -> bool:
@@ -243,7 +255,7 @@ class GolayWindow:
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(400, 200, "Send Some Text", 9, 7)
+        self.set_window_properties(1600, 1000, "Send Some Text", 12, 9)
 
         # Mygtukas grizti atgal i meniu.
         menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
@@ -258,6 +270,30 @@ class GolayWindow:
         probButton = Button(self.window, width=12, text="Set Probability")
         probButton.configure(command=partial(self.button_color_update_probability, probButton, probEntry))
         probButton.grid(columnspan=1, row=2, column=4)
+
+        # Teksto siuntimui ivestis.
+        textInputLabel = Label(self.window, text="Text To Send:")
+        textInputLabel.grid(columnspan=2, row=3, column=0)
+        textInputTextArea = ScrolledText(self.window)
+        textInputTextArea.grid(columnspan=5, rowspan=2, row=4, column=1)
+
+        # Gautas nekoduotas tekstas.
+        rawTextOutputLabel = Label(self.window, text="Received Raw Text:")
+        rawTextOutputLabel.grid(columnspan=2, row=0, column=7)
+        rawTextOutputTextArea = ScrolledText(self.window, state="disabled")
+        rawTextOutputTextArea.grid(columnspan=5, rowspan=3, row=1, column=7, padx=50)
+
+        # Gautas koduotas tekstas.
+        encodedTextOutputLabel = Label(self.window, text="Received Encoded Text:")
+        encodedTextOutputLabel.grid(columnspan=2, row=4, column=7)
+        encodedTextOutputTextArea = ScrolledText(self.window, state="disabled")
+        encodedTextOutputTextArea.grid(columnspan=5, rowspan=3, row=5, column=7, padx=50)
+
+        # Tesksto siuntimo mygtukas.
+        textInputSendButton = Button(self.window, width=12, text="Send Text")
+        textInputSendButton.configure(command=partial(self.send_text, textInputSendButton, textInputTextArea,
+                                                      rawTextOutputTextArea, encodedTextOutputTextArea))
+        textInputSendButton.grid(columnspan=1, row=7, column=4)
 
         # Inicializuojamas lango veikimo ciklas.
         self.window.mainloop()
@@ -379,6 +415,41 @@ class GolayWindow:
         else:
             # Nudazome klaidos perskaiciavimo mygtuka raudonai.
             mistakeButton.configure(bg=self.buttonErrorColor)
+
+    def send_text(self, textSendButton: Button, textInputTextArea: ScrolledText,
+                  rawTextOutputTextArea: ScrolledText, encodedTextOutputTextArea: ScrolledText):
+        """Metodas, kuris persiuncia ir parodo nekoduota ir uzkoduota teksta.
+
+        textSendButton turi buti Button tipo klases kintamasis.
+        textSendButton yra teksto siuntimo mygtukas.
+        textInputTextArea turi buti ScrolledText tipo kintamasis.
+        textInputTextArea yra teksto ivesties parodymo sritis.
+        rawTextOutputTextArea turi buti ScrolledText tipo kintamasis.
+        rawTextOutputTextArea yra nekoduoto kanalu persiusto teksto parodymo sritis.
+        encodedTextOutputTextArea turi buti ScrolledText tipo kintamasis.
+        encodedTextOutputTextArea yra uzkoduoto kanalu persiusto teksto parodymo sritis.
+        """
+
+        textInput = get_scrolled_text_area_text(textInputTextArea)
+
+        # Patikriname, ar teksto ivesties parodymo sritis yra tuscia.
+        if textInput:
+            receivedRawText, receivedEncodedText = self.golayExecutor.send_text(textInput)
+
+            # Is kanalo gauta teksta parodomose atitinkamose teksto srityse.
+            rawTextOutputTextArea.configure(state="normal")
+            set_scrolled_text_area_text(rawTextOutputTextArea, receivedRawText)
+            rawTextOutputTextArea.configure(state="disabled")
+
+            encodedTextOutputTextArea.configure(state="normal")
+            set_scrolled_text_area_text(encodedTextOutputTextArea, receivedEncodedText)
+            encodedTextOutputTextArea.configure(state="disabled")
+
+            # Siuntimo mygtukas nudazomas zaliai.
+            textSendButton.configure(bg=self.buttonOkColor)
+        # Jeigu teksto ivesties parodymo sritis yra tuscia, nudazome siuntimo mygtuka raudonai.
+        else:
+            textSendButton.configure(bg=self.buttonErrorColor)
 
     def encode_send_vector(self, button: Button, vectorEntry: Entry, encodedVectorEntry: Entry,
                            distortedVectorEntry: Entry, mistakeEntry: Entry):

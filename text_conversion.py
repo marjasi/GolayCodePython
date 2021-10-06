@@ -3,7 +3,7 @@ from bitarray import bitarray
 from typing import List
 
 # Teksto uzkodavimo formatas.
-g_text_encoding = "utf-8"
+g_text_encoding = "utf-16"
 
 
 def text_to_bit_array(text: str) -> List[int]:
