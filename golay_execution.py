@@ -51,6 +51,19 @@ class GolayExecution:
         encodedVector = self.golayCode.encode_vector(vector)
         return encodedVector
 
+    def decode_vector(self, encodedVector: Vector) -> tuple[Vector, str]:
+        """Metodas, kuris dekoduoja uzkoduota vektoriu encodedVector.
+
+        Metodas grazina rezultatu rinkini, kurio pirmas elementas yra dekoduotas vektorius,
+         o antras elementas yra algoritmo vykdymo informacijos tekstas.
+        """
+
+        decodedVector, algorithmLog = self.golayCode.decode_vector(encodedVector)
+
+        # Paliekame tik tuos elementus, kurie yra esminiai.
+        decodedVector.elements = decodedVector.elements[0:decodedVector.essentialElemLen]
+        return decodedVector, algorithmLog
+
     def send_vector(self, vector: Vector) -> Vector:
         """Metodas, kuris komunikacijos kanalu nusiuncia vektoriu vector ir grazina is kanalo gauta vektoriu.
 

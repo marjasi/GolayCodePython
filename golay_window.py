@@ -165,7 +165,7 @@ class GolayWindow:
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(1200, 500, "Send a Vector", 11, 14)
+        self.set_window_properties(1200, 500, "Send a Vector", 12, 14)
 
         # Mygtukas grizti atgal i meniu.
         menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
@@ -207,10 +207,22 @@ class GolayWindow:
                                                     encodedVectorEntry, distVectorEntry, distVectorErrorEntry))
         vectorInputButton.grid(columnspan=1, row=7, column=4)
 
+        # Dekoduoto vektoriaus parodymo ivestis.
+        decodedVectorEntry = Entry(self.window, state="readonly", width=25)
+        decodedVectorEntry.grid(columnspan=2, row=11, column=2)
+
+        # Algoritmo veikimo israsas.
+        algorithmLogLabel = Label(self.window, text="Algorithm Log:")
+        algorithmLogLabel.grid(columnspan=2, row=1, column=6)
+        algorithmLogText = ScrolledText(self.window, width=65)
+        algorithmLogText.grid(columnspan=5, rowspan=9, row=2, column=6)
+
         # Gauto is kanalo vektoriaus keitimas.
         distVectorLabel = Label(self.window, text="Received Vector:")
         distVectorLabel.grid(columnspan=2, row=9, column=0)
         distVectorButton = Button(self.window, width=12, text="Decode")
+        distVectorButton.configure(comman=partial(self.decode_vector, distVectorEntry, decodedVectorEntry,
+                                                  distVectorButton, algorithmLogText))
         distVectorButton.grid(columnspan=1, row=9, column=4)
 
         # Klaidu perskaiciavimas.
@@ -222,14 +234,6 @@ class GolayWindow:
         # Dekoduotas vektorius.
         decodedVectorLabel = Label(self.window, text="Decoded Vector:")
         decodedVectorLabel.grid(columnspan=2, row=11, column=0)
-        decodedVectorEntry = Entry(self.window, state="readonly", width=25)
-        decodedVectorEntry.grid(columnspan=2, row=11, column=2)
-
-        # Algoritmo veikimo israsas.
-        algorithmLogLabel = Label(self.window, text="Algorithm Log:")
-        algorithmLogLabel.grid(columnspan=2, row=1, column=6)
-        algorithmLogText = ScrolledText(self.window, width=60)
-        algorithmLogText.grid(columnspan=4, rowspan=9, row=2, column=6)
 
         # Inicializuojamas lango veikimo ciklas.
         self.window.mainloop()
@@ -306,6 +310,43 @@ class GolayWindow:
             return False
         return True
 
+    def decode_vector(self, encodedVectorEntry: Entry, distortedVectorEntry: Entry, decodedVectorButton: Button,
+                      scrolledTextArea: ScrolledText):
+        """Metodas, kuris dekoduoja vektoriu esanti ivestyje encodedVectorEntry ir parodo dekoduota vektoriu
+            ivestyje decodedVectorEntry.
+
+        distortedVectorEntry turi buti Entry klases tipo kintamasis.
+        distortedVectorEntry yra iskraipyto vektoriaus parodymo ivestis.
+        decodedVectorEntry turi buti Entry klases tipo kintamasis.
+        decodedVectorEntry yra dekoduoto vektoriaus parodymo ivestis.
+        decodedVectorButton turi buti Button klases tipo kintamasis.
+        decodedVectorButton yra vektoriaus dekodavimo mygtukas.
+        scrolledTextArea turi buti ScrolledText klases tipo kintamasis.
+        scrolledTextArea yra teksto laukas, kuriame bus rodomas algoritmo vykdymo tekstas.
+        """
+
+        # Patikriname, ar uzkoduotas vektoriaus atitinka reikiama formata
+        if check_encoded_vector_regex(encodedVectorEntry.get()):
+            encodedVector = op.create_vector_from_string(encodedVectorEntry.get())
+
+            # Dekoduojame uzkoduota vektoriu.
+            decodedVector, algorithmLog = self.golayExecutor.decode_vector(encodedVector)
+
+            # Parodome vartotojui dekoduota vektoriu.
+            distortedVectorEntry.configure(state="normal")
+            set_entry_text(distortedVectorEntry, decodedVector.get_elements_as_string())
+            distortedVectorEntry.configure(state="disabled")
+
+            # Parodome algoritmo vykdymo teksta.
+            set_scrolled_text_area_text(scrolledTextArea, algorithmLog)
+
+            # Nudazome dekodavimo mygtuka zaliai.
+            decodedVectorButton.configure(bg=self.buttonOkColor)
+        # Uzkoduotas vektoriaus formato neatitinka.
+        else:
+            # Nudazome dekodavimo mygtuka raudonai.
+            decodedVectorButton.configure(bg=self.buttonErrorColor)
+
     def renew_error_number(self, encodedVectorEntry: Entry, distortedVectorEntry: Entry, mistakeEntry: Entry,
                            mistakeButton: Button):
         """Metodas, kuris perskaicijuoja klaidu skaiciu is kanalo gautame iskreiptame vektoriuje.
@@ -325,8 +366,8 @@ class GolayWindow:
 
         # Patikriname, ar abu vektoriai turi elementus (yra netusti) ir ar vektoriai atitinka reikiama formata.
         if encodedVector.elements and receivedVector.elements\
-                and check_encoded_vector_regex(encodedVector.get_elements_as_string())\
-                and check_encoded_vector_regex(receivedVector.get_elements_as_string()):
+                and check_encoded_vector_regex(encodedVectorEntry.get())\
+                and check_encoded_vector_regex(distortedVectorEntry.get()):
             # Suskaiciuojamos padarytos klaidos ir atnaujinamas klaidu skaicius.
             resultTuple = self.golayExecutor.get_error_num_positions(encodedVector, receivedVector)
             mistakeEntry.configure(state="normal")
