@@ -67,7 +67,11 @@ def create_vector_from_string(bitString: str) -> Vector:
         elif char == "0":
             vectorElements.append(0)
 
-    return Vector(vectorElements, len(vectorElements))
+    # Jeigu vektorius yra ilgesnis uz 12, jo esminio turinio ilgis visada bus 12.
+    if len(vectorElements) > 12:
+        return Vector(vectorElements, 12)
+    else:
+        return Vector(vectorElements, len(vectorElements))
 
 
 def fill_vector_zeros(vector: Vector):
