@@ -23,6 +23,20 @@ def set_entry_text(entry: Entry, entryText: str):
     entry.insert(0, entryText)
 
 
+def set_scrolled_text_area_text(scrolledTextArea: ScrolledText, areaText: str):
+    """Metodas, kuris pakeicia ivesties sriytje scrolledTextArea esanti teksta i areaText.
+
+    scrolledTextArea turi buti ScrolledText klases tipo kintamasis.
+    areaText turi buti str tipo kintamasis.
+    """
+
+    # Istriname visa scrolledTextArea esanti teksta.
+    scrolledTextArea.delete(1.0, END)
+
+    # Idedame nauja teksta areaText.
+    scrolledTextArea.insert(1.0, areaText)
+
+
 def check_vector_regex(vectorString: str) -> bool:
     """Metodas, kuris patikrina vektoriaus ilgi ir turini pagal nurodyta regex formata.
 
