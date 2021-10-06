@@ -39,6 +39,22 @@ def check_vector_regex(vectorString: str) -> bool:
         return False
 
 
+def check_encoded_vector_regex(vectorString: str) -> bool:
+    """Metodas, kuris patikrina uzkoduoto vektoriaus ilgi ir turini pagal nurodyta regex formata.
+
+    vectorString turi buti str tipo kintamasis.
+    Metodas grazina bool tipo kintamaji.
+    Grazinama True, jeigu vectorString tenkina regex formata.
+    Grazinama False, jeigu vectorString netenkina regex formato.
+    regex formatas apibrezia ilgio 12 vektoriu, kuri sudaro elementai 0 ar 1.
+    """
+
+    if re.fullmatch("[01]{23}", vectorString) is not None:
+        return True
+    else:
+        return False
+
+
 class GolayWindow:
     """Programos grafines vartotojo sasajos klase.
 
@@ -181,7 +197,13 @@ class GolayWindow:
         distVectorLabel = Label(self.window, text="Received Vector:")
         distVectorLabel.grid(columnspan=2, row=9, column=0)
         distVectorButton = Button(self.window, width=12, text="Decode")
-        distVectorButton.grid(columnspan=1, row=10, column=4)
+        distVectorButton.grid(columnspan=1, row=9, column=4)
+
+        # Klaidu perskaiciavimas.
+        renewErrorButton = Button(self. window, width=16, text="Recalculate Mistakes")
+        renewErrorButton.configure(command=partial(self.renew_error_number, encodedVectorEntry,
+                                                   distVectorEntry, distVectorErrorEntry, renewErrorButton))
+        renewErrorButton.grid(columnspan=1, row=10, column=4)
 
         # Dekoduotas vektorius.
         decodedVectorLabel = Label(self.window, text="Decoded Vector:")
@@ -269,6 +291,39 @@ class GolayWindow:
         except ValueError:
             return False
         return True
+
+    def renew_error_number(self, encodedVectorEntry: Entry, distortedVectorEntry: Entry, mistakeEntry: Entry,
+                           mistakeButton: Button):
+        """Metodas, kuris perskaicijuoja klaidu skaiciu is kanalo gautame iskreiptame vektoriuje.
+
+        encodedVectorEntry turi buti Entry klases tipo kintamasis.
+        encodedVectorEntry yra uzkoduoto vektoriaus parodymo ivestis.
+        distortedVectorEntry turi buti Entry klases tipo kintamasis.
+        distortedVectorEntry yra iskraipyto vektoriaus parodymo ivestis.
+        mistakeEntry turi buti Entry klases tipo kintamasis.
+        mistakeEntry yra kanale padarytu klaidu skaiciaus parodymo ivestis.
+        mistakeButton turi buti Button klases tipo kintamasis.
+        mistakeButton yra klaidu perskaiciavimo mygtukas.
+        """
+
+        encodedVector = op.create_vector_from_string(encodedVectorEntry.get())
+        receivedVector = op.create_vector_from_string(distortedVectorEntry.get())
+
+        # Patikriname, ar abu vektoriai turi elementus (yra netusti) ir ar vektoriai atitinka reikiama formata.
+        if encodedVector.elements and receivedVector.elements\
+                and check_encoded_vector_regex(encodedVector.get_elements_as_string())\
+                and check_encoded_vector_regex(receivedVector.get_elements_as_string()):
+            # Suskaiciuojamos padarytos klaidos ir atnaujinamas klaidu skaicius.
+            resultTuple = self.golayExecutor.get_error_num_positions(encodedVector, receivedVector)
+            mistakeEntry.configure(state="normal")
+            set_entry_text(mistakeEntry, str(resultTuple[0]))
+            mistakeEntry.configure(state="disabled")
+
+            # Nudazome klaidos perskaiciavimo mygtuka zaliai.
+            mistakeButton.configure(bg=self.buttonOkColor)
+        else:
+            # Nudazome klaidos perskaiciavimo mygtuka raudonai.
+            mistakeButton.configure(bg=self.buttonErrorColor)
 
     def encode_send_vector(self, button: Button, vectorEntry: Entry, encodedVectorEntry: Entry,
                            distortedVectorEntry: Entry, mistakeEntry: Entry):
