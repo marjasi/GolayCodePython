@@ -1,10 +1,12 @@
 # Biblioteka skirta grafinei vartotojo sasajai sukurti.
+import operations as op
 from tkinter import *
 from tkinter.scrolledtext import ScrolledText
+from tkinter import filedialog
 # Biblioteka naudojama perduoti metodams parametrus spaudziant mygtukus.
 from functools import partial
 from golay_execution import GolayExecution
-import operations as op
+from PIL import Image, ImageTk
 # Biblioteka naudojama patikrinti ivesciu tinkamuma naudojant regex.
 import re
 
@@ -89,8 +91,12 @@ class GolayWindow:
 
     # Programos langas. Nebutinai pagrindinis.
     window = None
+
     # Golejaus kodo vykdymo klase.
     golayExecutor = None
+
+    # Siuo metu pasirinktas paveikslelis.
+    selectedImg = None
 
     # Mygtuko spalva, kai nebuvo klaidu.
     buttonOkColor = "#9CFD8C"
@@ -303,7 +309,7 @@ class GolayWindow:
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(400, 200, "Send an Image", 13, 9)
+        self.set_window_properties(1600, 800, "Send an Image", 17, 11)
 
         # Mygtukas grizti atgal i meniu.
         menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
@@ -319,8 +325,40 @@ class GolayWindow:
         probButton.configure(command=partial(self.button_color_update_probability, probButton, probEntry))
         probButton.grid(columnspan=1, row=2, column=4)
 
+        # Paveikslelio pasirinkimas ir siuntimas.
+        showImgLabel = Label(self.window)
+        showImgLabel.grid(columnspan=4, rowspan=7, row=1, column=5)
+        selectImgButton = Button(self.window, text="Select Image...")
+        selectImgButton.configure(command=partial(self.show_bmp_image, showImgLabel))
+        selectImgButton.grid(columnspan=1, row=3, column=4)
+        shownImgAnnotationLabel = Label(self.window, text="Selected Image:")
+        shownImgAnnotationLabel.grid(columnspan=2, row=0, column=5)
+        sendImgButton = Button(self.window, text="Send Image")
+        sendImgButton.grid(columnspan=1, row=4, column=4)
+
+
         # Inicializuojamas lango veikimo ciklas.
         self.window.mainloop()
+
+    def show_bmp_image(self, imgLabel: Label):
+        """Metodas, kuris parodo nurodytoje vietoje esanti paveiksleli erdveje imgLabel.
+
+        imgLabel turi buti Label klases tipo kintamasis.
+        """
+
+        # Nurodome failo vietos pasirinkimo veiksma ir palaikomus failu tipus.
+        imgPath = filedialog.askopenfilename(filetypes=[("Image File", ".bmp")])
+
+        # Jeigu buvo pasirinktas failas.
+        if imgPath:
+            # Paveikslelis atidaromas, i paveiksleli issaugoma nuoroda klases kintamajame.
+            image = Image.open(imgPath)
+            self.selectedImg = image
+            tkImage = ImageTk.PhotoImage(image)
+
+            # Paveikslelis parodomas nurodytoje erdveje.
+            imgLabel.configure(image=tkImage)
+            imgLabel.image = tkImage
 
     def close_window(self):
         """Metodas, kuris uzdaro rodoma langa."""
