@@ -434,7 +434,6 @@ class GolayWindow:
                 # Gauti is kanalo paveiksleliai parodomi atitinkamose rodymo srityse.
                 self.show_bmp_image(rawImgLabel, receivedRawImg)
                 self.show_bmp_image(encImgLabel, receivedEncodedImg)
-
         # Jeigu paveikslelis nebuvo pasirinktas, nudazome mygtuka raudonai.
         else:
             sendButton.configure(bg=self.buttonErrorColor)
