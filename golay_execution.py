@@ -84,7 +84,7 @@ class GolayExecution:
 
         try:
             return self.send_raw_text(text), self.send_encoded_text(text)
-        # Jeigu negalime dekoduoti gauti is kanalo teksto i tekstini unicode formata, graziname specifini pranesima.
+        # Jeigu negalime dekoduoti gauto is kanalo teksto i tekstini unicode formata, graziname specifini pranesima.
         except UnicodeDecodeError:
             errorMessage = "**ERROR**UNABLE**TO**DECODE**TEXT**CORRUPTION**AT*CRITICAL**LEVELS**"
             return errorMessage, errorMessage
