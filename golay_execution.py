@@ -112,10 +112,12 @@ class GolayExecution:
         encodedImg = copy.deepcopy(rawImg)
 
         # Atskiriame .bmp failu antrasciu informacija nuo failo turinio informacijos.
-        # .bmp failo antraste dvejetainiame formate yra 14 baitu dydzio.
-        # Vadinasi, mums negalima iskreipti pirmu 112 bitu.
-        rawImg = op.separate_list_into_two_chunks(rawImg, 200)
-        encodedImg = op.separate_list_into_two_chunks(encodedImg, 200)
+        # .bmp failo antrastes dydis priklauso nuo .bmp failo formato.
+        # Pavyzdziui, .bmp failu saugojimui daznai naudojama yra Windows V3 BMP antraste, kurios dydis yra 40 baitu.
+        # Prie to dar pridedame failo informacijos antraste, kurios dydis yra 14 baitu.
+        # Turime 54 baitu antraste. Tai yra 54 * 8 = 432 bitai, tad ju ir neiskraipysime.
+        rawImg = op.separate_list_into_two_chunks(rawImg, 432)
+        encodedImg = op.separate_list_into_two_chunks(encodedImg, 432)
 
         # Kanalu siunciame tik paveiksleliu turinio informacija.
         rawImg[1] = self.send_bit_array(rawImg[1], False)

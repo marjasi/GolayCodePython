@@ -348,7 +348,7 @@ class GolayWindow:
         shownImgAnnotationLabel = Label(self.window, text="Selected Image:")
         shownImgAnnotationLabel.grid(columnspan=2, row=0, column=5)
         sendImgButton = Button(self.window, text="Send Image")
-        sendImgButton.configure(command=partial(self.send_selected_bmp_image, showReceivedRawImgLabel,
+        sendImgButton.configure(command=partial(self.send_selected_bmp_image, sendImgButton, showReceivedRawImgLabel,
                                                 showReceivedEncodedImgLabel))
         sendImgButton.grid(columnspan=1, row=4, column=4)
 
@@ -399,24 +399,46 @@ class GolayWindow:
             image = Image.open(imgPath)
             self.show_bmp_image(imgLabel, image, True)
 
-    def send_selected_bmp_image(self, rawImgLabel: Label, encImgLabel: Label):
+    def send_selected_bmp_image(self, sendButton: Button, rawImgLabel: Label, encImgLabel: Label):
         """Metodas, kuris nusiuncia pasirinkta paveiksleli kanalu dviem budais: uzkodavus ir neuzkodavus.
         Gauti paveiksleliai parodomi atitinkamose rodymo srityse rawImgLabel ir encImgLabel.
         Gauti paveiksleliai taip pat yra issaugomi toje pacioje direktorijoje kaip ir pasirinktas paveikslelis.
         Failu pavadinimai sudaromi pridejus prefiksus raw ir enc prie originalaus paveikslelio pavadinimo.
 
+        sendButton turi buti Button klases tipo kintamasis.
+        sendButton yra paveikslelio siuntimo mygtukas.
         rawImgLabel turi buti Label klases tipo kintamasis.
         rawImgLabel yra neuzkoduoto gauto is kanalo paveikslelio rodymo sritis.
         encImgLabel turi buti Label klases tipo kintamasis.
         encImgLabel yra uzkoduoto gauto is kanalo paveikslelio rodymo sritis.
         """
 
-        # Pasirinktas paveikslelis nusiunciamas kanalu.
-        receivedRawImg, receivedEncodedImg = self.golayExecutor.send_image_bit_data(self.selectedImageDirectory)
+        # Is kanalo gautas nekoduotas paveikslelis.
+        receivedRawImg = None
 
-        # Gauti is kanalo paveiksleliai parodomi atitinkamose rodymo srityse.
-        self.show_bmp_image(rawImgLabel, receivedRawImg)
-        self.show_bmp_image(encImgLabel, receivedEncodedImg)
+        # Is kanalo gautas uzkoduotas paveikslelis.
+        receivedEncodedImg = None
+
+        # Jeigu buvo pasirinktas paveikslelis, tik tada siunciame paveiksleli kanalu.
+        if self.selectedImageDirectory:
+            # Nuimame raudona spalva nuo mygtuko.
+            sendButton.configure(bg="SystemButtonFace")
+
+            # Bandome paveikslelius siusti kanalu, ivykus klaidoms parodome paveikslelius, kurie informuoja
+            #  apie nepalaikoma bmp failo antrasciu formata.
+            try:
+                receivedRawImg, receivedEncodedImg = self.golayExecutor.send_image_bit_data(self.selectedImageDirectory)
+            except OSError:
+                receivedRawImg = receivedEncodedImg = Image.open(r"bmp\errorImg.bmp")
+            finally:
+                # Gauti is kanalo paveiksleliai parodomi atitinkamose rodymo srityse.
+                self.show_bmp_image(rawImgLabel, receivedRawImg)
+                self.show_bmp_image(encImgLabel, receivedEncodedImg)
+
+        # Jeigu paveikslelis nebuvo pasirinktas, nudazome mygtuka raudonai.
+        else:
+            sendButton.configure(bg=self.buttonErrorColor)
+
 
     def close_window(self):
         """Metodas, kuris uzdaro rodoma langa."""
