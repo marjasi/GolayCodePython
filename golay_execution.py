@@ -93,17 +93,15 @@ class GolayExecution:
             errorMessage = "**ERROR**UNABLE**TO**DECODE**TEXT**CORRUPTION**AT*CRITICAL**LEVELS**"
             return errorMessage, errorMessage
 
-    def send_image(self, image: Image, imageDirectory: str) -> tuple[Image, Image]:
-        """Metodas, kuris kanalu nusiuncia paveiksleli image dviem budais: uzkodavus ir nekodavus.
+    def send_image_bit_data(self, imageDirectory: str) -> tuple[Image, Image]:
+        """Metodas, kuris kanalu nusiuncia paveiksleli esanti imageDirectory dviem budais: uzkodavus ir nekodavus.
         Metodas grazina gautus is kanalo paveikslelius.
         Gauti is kanalo paveiksleliai taip pat yra issaugomi toje pacioje direktorijoje
          kaip ir pasirinktas paveikslelis.
         Failu pavadinimai sudaromi pridejus prefiksus raw ir enc prie originalaus paveikslelio pavadinimo.
 
-        image turi buti Image klases tipo kintamasis.
-        image yra siunciamas paveikslelis.
         imageDirectory turi buti str tipo kintamasis.
-        imageDirectory yra paveikslelio img buvimo vieta.
+        imageDirectory yra paveikslelio buvimo vieta.
         Metodas grazina rezultatu rinkini, kurio pirmas elementas yra gautas is kanalo neuzkoduotas paveikslelis,
          o antras elementas - gautas is kanalo uzkoduotas paveikslelis.
         """
@@ -113,7 +111,88 @@ class GolayExecution:
         # Su giliaja kopija sukuriame du identisko turinio masyvus, kurie yra skirtingi objektai.
         encodedImg = copy.deepcopy(rawImg)
 
-        rawImg = self.send_raw_text(rawImg)
+        # Atskiriame .bmp failu antrasciu informacija nuo failo turinio informacijos.
+        # .bmp failo antraste dvejetainiame formate yra 14 baitu dydzio.
+        # Vadinasi, mums negalima iskreipti pirmu 112 bitu.
+        rawImg = op.separate_list_into_two_chunks(rawImg, 200)
+        encodedImg = op.separate_list_into_two_chunks(encodedImg, 200)
+
+        # Kanalu siunciame tik paveiksleliu turinio informacija.
+        rawImg[1] = self.send_bit_array(rawImg[1], False)
+        encodedImg[1] = self.send_bit_array(encodedImg[1], True)
+
+        # Sujungiame paveiksleliu turinio informacija su antrastes informacija.
+        rawImg = op.merge_sublists(rawImg)
+        encodedImg = op.merge_sublists(encodedImg)
+
+        # Randame paveikslelio direktorijos kelia ir paveikslelio pavadinima.
+        imgDirectory, imgFileName = op.get_directory_and_file_name(imageDirectory)
+
+        # Sudarome is kanalo gautu paveiksleliu direktorijos kelius.
+        rawImgLocation = copy.deepcopy(imgDirectory)
+        rawImgLocation += "raw"
+        rawImgLocation += copy.deepcopy(imgFileName)
+        encodedImgLocation = copy.deepcopy(imgDirectory)
+        encodedImgLocation += "enc"
+        encodedImgLocation += copy.deepcopy(imgFileName)
+
+        # Issaugome is kanalo gautus paveikslelius direktorijoje.
+        rawImg = bmp_conv.bit_array_to_bmp(rawImg, rawImgLocation)
+        encodedImg = bmp_conv.bit_array_to_bmp(encodedImg, encodedImgLocation)
+
+        return rawImg, encodedImg
+
+    def send_image(self, imageDirectory: str) -> tuple[Image, Image]:
+        """Metodas, kuris kanalu nusiuncia paveiksleli esanti imageDirectory dviem budais: uzkodavus ir nekodavus.
+        Metodas grazina gautus is kanalo paveikslelius.
+        Gauti is kanalo paveiksleliai taip pat yra issaugomi toje pacioje direktorijoje
+         kaip ir pasirinktas paveikslelis.
+        Failu pavadinimai sudaromi pridejus prefiksus raw ir enc prie originalaus paveikslelio pavadinimo.
+
+        imageDirectory turi buti str tipo kintamasis.
+        imageDirectory yra paveikslelio buvimo vieta.
+        Metodas grazina rezultatu rinkini, kurio pirmas elementas yra gautas is kanalo neuzkoduotas paveikslelis,
+         o antras elementas - gautas is kanalo uzkoduotas paveikslelis.
+        """
+
+        rawImg = bmp_conv.bmp_to_bit_array(imageDirectory)
+
+        # Su giliaja kopija sukuriame du identisko turinio masyvus, kurie yra skirtingi objektai.
+        encodedImg = copy.deepcopy(rawImg)
+
+        # Atskiriame .bmp failu antrasciu informacija nuo failo turinio informacijos.
+        # Kadangi konvertuojame dvejetaini formata i base64 formata ir tada interpretuojame base64 kaip
+        #  teksta UTF-16 formatu, kuri konvertuojame i dvejetaini formata, antrastes informacija
+        #  sudarys pirmi 608 bitai.
+        # .bmp failo antraste dvejetainiame formate yra 14 baitu dydzio. Tai bus 112 bitu.
+        # Tada base64 vienas simbolis apibudina 6 bitus. Tad musu 112 bitu yra apie 19 base64 simboliu.
+        # UTF-16 formate vienam simboliui gali buti skiriama iki 4 baitu. Tad base64 19 simboliu bus skiriami 76 baitai.
+        # Vadinasi, antrastes informacija bus 608 bitu ilgio.
+        rawImg = op.separate_list_into_two_chunks(rawImg, 608)
+        encodedImg = op.separate_list_into_two_chunks(encodedImg, 608)
+
+        # Kanalu siunciame tik paveiksleliu turinio informacija.
+        rawImg[1] = self.send_bit_array(rawImg[1], False)
+        encodedImg[1] = self.send_bit_array(encodedImg[1], True)
+
+        # Sujungiame paveiksleliu turinio informacija su antrastes informacija.
+        rawImg = op.merge_sublists(rawImg)
+        encodedImg = op.merge_sublists(encodedImg)
+
+        # Randame paveikslelio direktorijos kelia ir paveikslelio pavadinima.
+        imgDirectory, imgFileName = op.get_directory_and_file_name(imageDirectory)
+
+        # Sudarome is kanalo gautu paveiksleliu direktorijos kelius.
+        rawImgLocation = copy.deepcopy(imgDirectory)
+        rawImgLocation += "raw"
+        rawImgLocation += copy.deepcopy(imgFileName)
+        encodedImgLocation = copy.deepcopy(imgDirectory)
+        encodedImgLocation += "enc"
+        encodedImgLocation += copy.deepcopy(imgFileName)
+
+        # Issaugome is kanalo gautus paveikslelius direktorijoje.
+        bmp_conv.bit_array_to_bmp(rawImg, rawImgLocation)
+        bmp_conv.bit_array_to_bmp(encodedImg, encodedImgLocation)
 
         return rawImg, encodedImg
 

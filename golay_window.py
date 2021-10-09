@@ -313,7 +313,7 @@ class GolayWindow:
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(1600, 800, "Send an Image", 19, 11)
+        self.set_window_properties(1600, 800, "Send an Image", 20, 11)
 
         # Mygtukas grizti atgal i meniu.
         menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
@@ -329,6 +329,16 @@ class GolayWindow:
         probButton.configure(command=partial(self.button_color_update_probability, probButton, probEntry))
         probButton.grid(columnspan=1, row=2, column=4)
 
+        # Gauti is kanalo paveiksleliai.
+        rawImgAnnotationLabel = Label(self.window, text="Received Raw Image:")
+        rawImgAnnotationLabel.grid(columnspan=2, row=0, column=10)
+        showReceivedRawImgLabel = Label(self.window)
+        showReceivedRawImgLabel.grid(columnspan=4, rowspan=7, row=1, column=10)
+        encodedImgAnnotationLabel = Label(self.window, text="Received Encoded Image:")
+        encodedImgAnnotationLabel.grid(columnspan=2, row=0, column=15)
+        showReceivedEncodedImgLabel = Label(self.window)
+        showReceivedEncodedImgLabel.grid(columnspan=4, rowspan=7, row=1, column=15)
+
         # Paveikslelio pasirinkimas ir siuntimas.
         showSelectedImgLabel = Label(self.window)
         showSelectedImgLabel.grid(columnspan=4, rowspan=7, row=1, column=5)
@@ -338,21 +348,13 @@ class GolayWindow:
         shownImgAnnotationLabel = Label(self.window, text="Selected Image:")
         shownImgAnnotationLabel.grid(columnspan=2, row=0, column=5)
         sendImgButton = Button(self.window, text="Send Image")
+        sendImgButton.configure(command=partial(self.send_selected_bmp_image, showReceivedRawImgLabel,
+                                                showReceivedEncodedImgLabel))
         sendImgButton.grid(columnspan=1, row=4, column=4)
 
         # Is naujo iejus i scenarijaus langa parodomas pries tai pasirinktas paveikslelis.
         if self.selectedImage is not None:
             self.show_bmp_image(showSelectedImgLabel, self.selectedImage, True)
-
-        # Gauti is kanalo paveiksleliai.
-        rawImgAnnotationLabel = Label(self.window, text="Received Raw Image:")
-        rawImgAnnotationLabel.grid(columnspan=2, row=0, column=10)
-        showReceivedRawImgLabel = Label(self.window)
-        showReceivedRawImgLabel.grid(columnspan=4, rowspan=7, row=1, column=10)
-        encodedImgAnnotationLabel = Label(self.window, text="Received Encoded Image:")
-        encodedImgAnnotationLabel.grid(columnspan=2, row=0, column=15)
-        showReceivedEncodedImgLabel = Label(self.window)
-        showReceivedEncodedImgLabel.grid(columnspan=4, row=1, column=15)
 
         # Inicializuojamas lango veikimo ciklas.
         self.window.mainloop()
@@ -397,7 +399,6 @@ class GolayWindow:
             image = Image.open(imgPath)
             self.show_bmp_image(imgLabel, image, True)
 
-
     def send_selected_bmp_image(self, rawImgLabel: Label, encImgLabel: Label):
         """Metodas, kuris nusiuncia pasirinkta paveiksleli kanalu dviem budais: uzkodavus ir neuzkodavus.
         Gauti paveiksleliai parodomi atitinkamose rodymo srityse rawImgLabel ir encImgLabel.
@@ -411,8 +412,7 @@ class GolayWindow:
         """
 
         # Pasirinktas paveikslelis nusiunciamas kanalu.
-        receivedRawImg, receivedEncodedImg = self.golayExecutor.send_image(self.selectedImage,
-                                                                           self.selectedImageDirectory)
+        receivedRawImg, receivedEncodedImg = self.golayExecutor.send_image_bit_data(self.selectedImageDirectory)
 
         # Gauti is kanalo paveiksleliai parodomi atitinkamose rodymo srityse.
         self.show_bmp_image(rawImgLabel, receivedRawImg)

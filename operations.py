@@ -2,6 +2,7 @@ from typing import List
 from vector import Vector
 from matrix import Matrix
 import copy
+import ntpath
 
 
 def divide_list_to_chunks(listToDivide: List[int], chunkSize: int) -> List[int]:
@@ -32,6 +33,18 @@ def increase_list_values(listToIncrease: List[int], increaseAmount: int) -> List
     return listToIncrease
 
 
+def get_directory_and_file_name(fullDirectoryPath: str) -> tuple[str, str]:
+    """Metodas, kuris pilname direktorijos aprase suranda direktorijos aplanko ir failo pavadinimo reiksmes.
+
+    fullDirectoryPath turi buti str tipo kintamasis.
+    fullDirectoryPath yra pilna direktorijos kelias.
+    Metodas grazina rezultatu rinkini, kurio pirmas elementas yra direktorijos aplanko kelias,
+     o antras elementas - failo pavadinimas.
+    """
+
+    return ntpath.dirname(fullDirectoryPath), ntpath.basename(fullDirectoryPath)
+
+
 def check_vector_len(vector: Vector) -> bool:
     """Metodas, kuris grazina True, jeigu vektoriaus vector ilgis yra 12, ir False, kitu atveju.
 
@@ -39,6 +52,39 @@ def check_vector_len(vector: Vector) -> bool:
     """
 
     return len(vector.elements) == 12
+
+
+def separate_list_into_two_chunks(listToSeparate: List, firstChunkLength: int) -> List:
+    """Metodas, kuris issakdio masyva list i du gabalus.
+    Pirmo gabalo ilgis yra firstChunkLength.
+    Antras gabalas apima visa likusia masyvo dali.
+
+    listToSeparate turi buti List tipo kintamasis.
+    firstChunkLength turi buti int tipo sveikasis skaicius.
+    Metodas grazina nauja masyva, kurio pirmas elementas yra masyvo listToSeparate pirmas gabalas, o antras elementas
+     yra masyvo listToSeparate antras gabalas.
+    """
+
+    separatedList = [copy.deepcopy(listToSeparate[0:firstChunkLength]),
+                     copy.deepcopy(listToSeparate[firstChunkLength:])]
+
+    return separatedList
+
+
+def merge_sublists(listWithSublists: List) -> List:
+    """Metodas, kuris sujungia masyvo gabalus i vientisa masyva.
+
+    listWithSublists turi buti List klases tipo kintamasis.
+    listWithSublists yra masyvas, kurio elementai yra masyvai, tai yra, masyvas, kuris padalintas i gabalus.
+    Metodas grazina sujungta masyva.
+    """
+
+    # for element atrenka listWithSublists gabalus kaip sublist ir tada parenkamas kiekvienas sublist elementas
+    #  element, kuris dedamas i galutini masyva mergedList.
+    # Kitaip sakant: praiteruojam listWithSublists gabalus ir kiekvieno gabalo kiekviena elementa.
+    mergedList = [sublist for element in listWithSublists for sublist in element]
+
+    return mergedList
 
 
 def remove_last_vector_element(vector: Vector):
