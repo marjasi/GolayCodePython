@@ -1,14 +1,15 @@
-# Biblioteka skirta grafinei vartotojo sasajai sukurti.
+# Biblioteka naudojama patikrinti ivesciu tinkamuma naudojant regex.
+import re
 import operations as op
+# Biblioteka skirta grafinei vartotojo sasajai sukurti.
 from tkinter import *
 from tkinter.scrolledtext import ScrolledText
 from tkinter import filedialog
 # Biblioteka naudojama perduoti metodams parametrus spaudziant mygtukus.
 from functools import partial
 from golay_execution import GolayExecution
+# Biblioteka naudojama darbui su paveiksleliais.
 from PIL import Image, ImageTk
-# Biblioteka naudojama patikrinti ivesciu tinkamuma naudojant regex.
-import re
 
 
 def set_entry_text(entry: Entry, entryText: str):
@@ -96,7 +97,10 @@ class GolayWindow:
     golayExecutor = None
 
     # Siuo metu pasirinktas paveikslelis.
-    selectedImg = None
+    selectedImage = None
+
+    # Pasirinkto paveikslelio direktorija.
+    selectedImageDirectory = None
 
     # Mygtuko spalva, kai nebuvo klaidu.
     buttonOkColor = "#9CFD8C"
@@ -309,7 +313,7 @@ class GolayWindow:
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(1600, 800, "Send an Image", 17, 11)
+        self.set_window_properties(1600, 800, "Send an Image", 19, 11)
 
         # Mygtukas grizti atgal i meniu.
         menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
@@ -326,22 +330,58 @@ class GolayWindow:
         probButton.grid(columnspan=1, row=2, column=4)
 
         # Paveikslelio pasirinkimas ir siuntimas.
-        showImgLabel = Label(self.window)
-        showImgLabel.grid(columnspan=4, rowspan=7, row=1, column=5)
+        showSelectedImgLabel = Label(self.window)
+        showSelectedImgLabel.grid(columnspan=4, rowspan=7, row=1, column=5)
         selectImgButton = Button(self.window, text="Select Image...")
-        selectImgButton.configure(command=partial(self.show_bmp_image, showImgLabel))
+        selectImgButton.configure(command=partial(self.show_bmp_image_after_selection, showSelectedImgLabel))
         selectImgButton.grid(columnspan=1, row=3, column=4)
         shownImgAnnotationLabel = Label(self.window, text="Selected Image:")
         shownImgAnnotationLabel.grid(columnspan=2, row=0, column=5)
         sendImgButton = Button(self.window, text="Send Image")
         sendImgButton.grid(columnspan=1, row=4, column=4)
 
+        # Is naujo iejus i scenarijaus langa parodomas pries tai pasirinktas paveikslelis.
+        if self.selectedImage is not None:
+            self.show_bmp_image(showSelectedImgLabel, self.selectedImage, True)
+
+        # Gauti is kanalo paveiksleliai.
+        rawImgAnnotationLabel = Label(self.window, text="Received Raw Image:")
+        rawImgAnnotationLabel.grid(columnspan=2, row=0, column=10)
+        showReceivedRawImgLabel = Label(self.window)
+        showReceivedRawImgLabel.grid(columnspan=4, rowspan=7, row=1, column=10)
+        encodedImgAnnotationLabel = Label(self.window, text="Received Encoded Image:")
+        encodedImgAnnotationLabel.grid(columnspan=2, row=0, column=15)
+        showReceivedEncodedImgLabel = Label(self.window)
+        showReceivedEncodedImgLabel.grid(columnspan=4, row=1, column=15)
 
         # Inicializuojamas lango veikimo ciklas.
         self.window.mainloop()
 
-    def show_bmp_image(self, imgLabel: Label):
-        """Metodas, kuris parodo nurodytoje vietoje esanti paveiksleli erdveje imgLabel.
+    def show_bmp_image(self, imgLabel: Label, image: Image, setAsSelected=False):
+        """Metodas, kuris nurodytoje erdveje imgLabel parodo paveiksleli image.
+
+        imgLabel turi buti Label klases tipo kintamasis.
+        imgLabel yra paveikslelio rodymo sritis.
+        image turi buti Image klases tipo kintamasis.
+        image yra paveikslelis.
+        setAsSelected turi buti bool tipo kintamasis.
+        Jeigu setAsSelected yra True, tai parodomas paveikslelis bus issaugotas kaip klases laukas self.selectedImage.
+        Jeigu setAsSelected yra False, tai parodomas paveikslelis nebus issaugotas
+         kaip klases laukas self.selectedImage.
+        Pagal nutylejima, setAsSelected yra False.
+        """
+
+        if setAsSelected:
+            # Nuoroda i paveiksleli ir paveikslelio direktorija issaugoma klases kintamuosiuose..
+            self.selectedImage = image
+
+        # Paveikslelis parodomas nurodytoje erdveje.
+        tkImage = ImageTk.PhotoImage(image)
+        imgLabel.configure(image=tkImage)
+        imgLabel.image = tkImage
+
+    def show_bmp_image_after_selection(self, imgLabel: Label):
+        """Metodas, kuris parodo pasirinktoje vietoje esanti paveiksleli erdveje imgLabel.
 
         imgLabel turi buti Label klases tipo kintamasis.
         """
@@ -351,14 +391,32 @@ class GolayWindow:
 
         # Jeigu buvo pasirinktas failas.
         if imgPath:
-            # Paveikslelis atidaromas, i paveiksleli issaugoma nuoroda klases kintamajame.
+            # Issaugome pasirinkto paveikslelio direktorija.
+            self.selectedImageDirectory = imgPath
+            # Paveikslelis atidaromas.
             image = Image.open(imgPath)
-            self.selectedImg = image
-            tkImage = ImageTk.PhotoImage(image)
+            self.show_bmp_image(imgLabel, image, True)
 
-            # Paveikslelis parodomas nurodytoje erdveje.
-            imgLabel.configure(image=tkImage)
-            imgLabel.image = tkImage
+
+    def send_selected_bmp_image(self, rawImgLabel: Label, encImgLabel: Label):
+        """Metodas, kuris nusiuncia pasirinkta paveiksleli kanalu dviem budais: uzkodavus ir neuzkodavus.
+        Gauti paveiksleliai parodomi atitinkamose rodymo srityse rawImgLabel ir encImgLabel.
+        Gauti paveiksleliai taip pat yra issaugomi toje pacioje direktorijoje kaip ir pasirinktas paveikslelis.
+        Failu pavadinimai sudaromi pridejus prefiksus raw ir enc prie originalaus paveikslelio pavadinimo.
+
+        rawImgLabel turi buti Label klases tipo kintamasis.
+        rawImgLabel yra neuzkoduoto gauto is kanalo paveikslelio rodymo sritis.
+        encImgLabel turi buti Label klases tipo kintamasis.
+        encImgLabel yra uzkoduoto gauto is kanalo paveikslelio rodymo sritis.
+        """
+
+        # Pasirinktas paveikslelis nusiunciamas kanalu.
+        receivedRawImg, receivedEncodedImg = self.golayExecutor.send_image(self.selectedImage,
+                                                                           self.selectedImageDirectory)
+
+        # Gauti is kanalo paveiksleliai parodomi atitinkamose rodymo srityse.
+        self.show_bmp_image(rawImgLabel, receivedRawImg)
+        self.show_bmp_image(encImgLabel, receivedEncodedImg)
 
     def close_window(self):
         """Metodas, kuris uzdaro rodoma langa."""

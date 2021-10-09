@@ -1,7 +1,11 @@
+# Treciuju saliu biblioteka naudojama teskto vertimui i dvejetaini formata ir atvirksciai.
+from bitarray import bitarray
+from PIL import Image
 from comm_channel import CommChannel
 from golay_code import GolayCode
 from vector import Vector
 from typing import List
+import copy
 import operations as op
 import text_conversion as txt_conv
 import bmp_conversion as bmp_conv
@@ -89,23 +93,48 @@ class GolayExecution:
             errorMessage = "**ERROR**UNABLE**TO**DECODE**TEXT**CORRUPTION**AT*CRITICAL**LEVELS**"
             return errorMessage, errorMessage
 
-    def send_raw_text(self, text: str) -> str:
-        """Metodas, kuris persiuncia nekoduota teksta komunikacijos kanalu.
+    def send_image(self, image: Image, imageDirectory: str) -> tuple[Image, Image]:
+        """Metodas, kuris kanalu nusiuncia paveiksleli image dviem budais: uzkodavus ir nekodavus.
+        Metodas grazina gautus is kanalo paveikslelius.
+        Gauti is kanalo paveiksleliai taip pat yra issaugomi toje pacioje direktorijoje
+         kaip ir pasirinktas paveikslelis.
+        Failu pavadinimai sudaromi pridejus prefiksus raw ir enc prie originalaus paveikslelio pavadinimo.
 
-        text turi buti str tipo kintamasis.
-        Metodas grazina is kanalo gauta nekoduota teksta str tipo kintamuoju.
+        image turi buti Image klases tipo kintamasis.
+        image yra siunciamas paveikslelis.
+        imageDirectory turi buti str tipo kintamasis.
+        imageDirectory yra paveikslelio img buvimo vieta.
+        Metodas grazina rezultatu rinkini, kurio pirmas elementas yra gautas is kanalo neuzkoduotas paveikslelis,
+         o antras elementas - gautas is kanalo uzkoduotas paveikslelis.
         """
 
-        # Gauto teksto masyvas.
-        receivedTextBitArray = []
+        rawImg = bmp_conv.bmp_to_bit_array(imageDirectory)
 
-        # Tekstas konvertuojamas i dvejetaini formata.
-        textBitArray = txt_conv.text_to_bit_array(text)
+        # Su giliaja kopija sukuriame du identisko turinio masyvus, kurie yra skirtingi objektai.
+        encodedImg = copy.deepcopy(rawImg)
+
+        rawImg = self.send_raw_text(rawImg)
+
+        return rawImg, encodedImg
+
+    def send_bit_array(self, bitArray: List[int], encode: bool) -> List[int]:
+        """Metodas, kuris nusiuncia dvejetainio formato informacijos masyva kanalu.
+
+        bitArray turi buti masyvas, kurio elementai yra int tipo sveikieji skaiciai.
+        encode turi buti bool tipo kintamasis.
+        Jeigu encode yra True, tai dvejetaine informacija bus uzkoduota pries siuntima kanalu.
+        Jeigu encode yra False, tai dvejetaine informacija nebus uzkoduota pries siuntima kanalu.
+        Metodas grazina is kanalo gauna dvejetaines informacijos masyva.
+        Grazinti masyvo elementai yra int tipo sveikieji skaiciai.
+        """
+
+        # Gautos dvejetaines informacijos masyvas.
+        receivedBitArray = []
 
         # Gauta dvejetainiu skaiciu masyva padalijame i ilgio 12 gabalus.
-        textBitArray = list(op.divide_list_to_chunks(textBitArray, 12))
+        dividedBitArray = list(op.divide_list_to_chunks(bitArray, 12))
 
-        for chunk in textBitArray:
+        for chunk in dividedBitArray:
             # Is kiekvieno gabalo sukuriame vektoriu ir ji apdorojame atskirai.
             # Isimename, kiek esminio turinio elementu yra kiekviename gabale - paskutiniame gali buti maziau nei 12.
             vector = Vector(chunk, len(chunk))
@@ -113,16 +142,38 @@ class GolayExecution:
             # Vektoriu pripildome nuliais, jeigu jo ilgis mazesnis nei 12.
             op.fill_vector_zeros(vector)
 
+            if encode:
+                # Uzkoduojamas vektorius.
+                vector = self.encode_vector(vector)
+
             # Is kanalo gautas iskraipytas vektorius.
             receivedVector = self.send_vector(vector)
 
-            # Pasiimame esmini turini is vektoriaus ir ji pridedame prie gauto teksto masyvo.
-            receivedVector.elements = receivedVector.elements[0:receivedVector.essentialElemLen]
+            if encode:
+                # Dekoduojamas is kanalo gautas vektorius.
+                resultTuple = self.decode_vector(receivedVector)
+                receivedVector = resultTuple[0]
+
+            if not encode:
+                # Pasiimame esmini turini is vektoriaus ir ji pridedame prie gauto teksto masyvo.
+                receivedVector.elements = receivedVector.elements[0:receivedVector.essentialElemLen]
 
             for element in receivedVector.elements:
-                receivedTextBitArray.append(element)
+                receivedBitArray.append(element)
 
-        return txt_conv.bit_array_to_text(receivedTextBitArray)
+        return receivedBitArray
+
+    def send_raw_text(self, text: str) -> str:
+        """Metodas, kuris persiuncia nekoduota teksta komunikacijos kanalu.
+
+        text turi buti str tipo kintamasis.
+        Metodas grazina is kanalo gauta nekoduota teksta str tipo kintamuoju.
+        """
+
+        # Tekstas konvertuojamas i dvejetaini formata.
+        textBitArray = txt_conv.text_to_bit_array(text)
+
+        return txt_conv.bit_array_to_text(self.send_bit_array(textBitArray, False))
 
     def send_encoded_text(self, text: str) -> str:
         """Metodas, kuris persiuncia uzkoduota teksta komunikacijos kanalu.
@@ -131,38 +182,10 @@ class GolayExecution:
         Metodas grazina is kanalo gauta uzkoduota teksta str tipo kintamuoju.
         """
 
-        # Gauto teksto masyvas.
-        receivedTextBitArray = []
-
         # Tekstas konvertuojamas i dvejetaini formata.
         textBitArray = txt_conv.text_to_bit_array(text)
 
-        # Gauta dvejetainiu skaiciu masyva padalijame i ilgio 12 gabalus.
-        textBitArray = list(op.divide_list_to_chunks(textBitArray, 12))
-
-        for chunk in textBitArray:
-            # Is kiekvieno gabalo sukuriame vektoriu ir ji apdorojame atskirai.
-            # Isimename, kiek esminio turinio elementu yra kiekviename gabale - paskutiniame gali buti maziau nei 12.
-            vector = Vector(chunk, len(chunk))
-
-            # Vektoriu pripildome nuliais, jeigu jo ilgis mazesnis nei 12.
-            op.fill_vector_zeros(vector)
-
-            # Uzkoduojamas vektorius.
-            encodedVector = self.encode_vector(vector)
-
-            # Is kanalo gautas iskraipytas vektorius.
-            receivedVector = self.send_vector(encodedVector)
-
-            # Dekoduojamas is kanalo gautas vektorius.
-            resultTuple = self.decode_vector(receivedVector)
-            decodedVector = resultTuple[0]
-
-            # Pridedame esmini turini prie gauto teksto masyvo.
-            for element in decodedVector.elements:
-                receivedTextBitArray.append(element)
-
-        return txt_conv.bit_array_to_text(receivedTextBitArray)
+        return txt_conv.bit_array_to_text(self.send_bit_array(textBitArray, True))
 
     def get_error_num_positions(self, encodedVector: Vector, receivedVector: Vector, increasePositionValues=False)\
             -> tuple[int, List[int]]:
