@@ -1,8 +1,6 @@
 # Biblioteka naudojama objektu kopijoms kurti.
 import copy
 import operations as op
-# Biblioteka skirta darbui su Excel failais.
-import openpyxl as opxl
 import text_conversion as txt_conv
 import bmp_conversion as bmp_conv
 # Treciuju saliu biblioteka naudojama darbui su paveiksleliais.
@@ -273,48 +271,6 @@ class GolayExecution:
         textBitArray = txt_conv.text_to_bit_array(text)
 
         return txt_conv.bit_array_to_text(self.send_bit_array(textBitArray, True))
-
-    def conduct_experiment(self, repeatNumber: int):
-        """Metodas, kuris ivykdo nurodyta kieki eksperimentu ir ju rezultatus
-            issaugo Excel faile experimentResults.xlsx.
-
-        repeatNumber turi buti int tipo sveikasis skaicius.
-        repeatNumber yra vykdomu eksperimentu kiekis.
-        """
-
-        return None
-
-    def write_data_to_excel_file(self, excelData: List, excelFileName: str):
-        """Metodas, kuris sukuria faila excelFileName ir i ji iraso duomenys excelData.
-
-        excelData turi buti List tipo masyvas.
-        excelData turetu tureti savyje masyvus, kurie atitinka kiekviena Excel failo eilute.
-        Pavyzdziui, norime irasyti i Excel faila tokias reiksmes:
-         Data  Trukme    Pacientas
-         09-23 2 val. Jonas Petraitis
-        Sios reiksmes excelData masyve turetu buti pateiktos taip:
-        excelData = [
-        ["Data", "Trukme", "Pacientas"]
-        ["09-23", "2 val.", "Jonas Petraitis"]
-        ]
-        excelFileName turi buti str tipo kintamasis.
-        excelFileName yra Excel failo, kuris bus sukurtas, pavadinimas.
-        """
-
-        # Excel failas.
-        excelWorkbook = opxl.Workbook()
-
-        # Excel failo lapas.
-        page = excelWorkbook.active
-
-        page.title = "Experiment Results"
-
-        # I Excel faila sudedami duomenys.
-        for row in excelData:
-            page.append(row)
-
-        # Issaugome Excel faila.
-        excelWorkbook.save(excelFileName)
 
     def get_error_num_positions(self, encodedVector: Vector, receivedVector: Vector, increasePositionValues=False)\
             -> tuple[int, List[int]]:

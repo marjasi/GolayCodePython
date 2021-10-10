@@ -196,8 +196,6 @@ class GolayWindow:
         textButton.grid(columnspan=1, row=1, column=0)
         imageButton = Button(self.window, text="Send an Image", command=self.close_window_open_image)
         imageButton.grid(columnspan=1, row=2, column=0)
-        imageButton = Button(self.window, text="Experiment", command=self.close_window_open_experiment)
-        imageButton.grid(columnspan=1, row=3, column=0)
         self.window.mainloop()
 
     def create_vector_window(self):
@@ -373,39 +371,6 @@ class GolayWindow:
         # Is naujo iejus i scenarijaus langa parodomas pries tai pasirinktas paveikslelis.
         if self.selectedImage is not None:
             self.show_bmp_image(showSelectedImgLabel, self.selectedImage, True)
-
-        # Inicializuojamas lango veikimo ciklas.
-        self.window.mainloop()
-
-    def create_experiment_window(self):
-        """Metodas, kuris sukuria eksperimentu langa."""
-
-        # Lango sukurimas ir ypatybes.
-        self.window = Tk()
-        self.set_window_properties(1200, 500, "Experiment", 5, 6)
-
-        # Mygtukas grizti atgal i meniu.
-        menuButton = Button(self.window, text="Back To Menu", command=self.close_window_open_main)
-        menuButton.grid(columnspan=1, row=0, column=0)
-
-        # Iskraipymo tikimybes ivestis.
-        probLabel = Label(self.window, text="Distortion Probability:")
-        probLabel.grid(columnspan=2, row=1, column=0)
-        probEntry = Entry(self.window)
-        probEntry.grid(columnspan=2, row=1, column=2)
-        probEntry.insert(0, self.golayExecutor.get_distortion_probability())
-        probButton = Button(self.window, width=12, text="Set Probability")
-        probButton.configure(command=partial(self.button_color_update_probability, probButton, probEntry))
-        probButton.grid(columnspan=1, row=2, column=4)
-
-        # Bandymu skaiciaus ivestis
-        repeatLabel = Label(self.window, text="Number Of Repeats:")
-        repeatLabel.grid(columnspan=2, row=3, column=0)
-        repeatEntry = Entry(self.window)
-        repeatEntry.grid(columnspan=2, row=3, column=2)
-        conductButton = Button(self.window, width=16, text="Conduct Experiment")
-        conductButton.configure(command=partial(self.button_color_conduct_experiment, conductButton, repeatEntry))
-        conductButton.grid(columnspan=1, row=4, column=4)
 
         # Inicializuojamas lango veikimo ciklas.
         self.window.mainloop()
@@ -682,24 +647,6 @@ class GolayWindow:
             # Nepavyko pakeisti iskraipymo tikimybes.
             button.configure(bg=self.buttonErrorColor)
 
-    def button_color_conduct_experiment(self, button: Button, repeatEntry: Entry):
-        """Metodas, kuris ivykdo eksperimentus ir pakeicia mygtuko spalva.
-
-        button turi buti Button klases tipo kintamasis.
-        button yra mygtukas, kuris bus nudazytas zaliai arba raudonai.
-        repeatEntry turi buti Entry klases tipo kintamasis.
-        repeatEntry yra ivesties laukas, i kuri buvo ivestas vykdomu eksperimentu skaicius.
-        """
-
-        # Pasitikriname, ar eksperimentu skaicius yra sveikas skaicius.
-        if check_repeat_number_regex(repeatEntry.get()):
-            # Vykdome eksperimentus ir nudazome mygtuka zaliai.
-            self.golayExecutor.conduct_experiment(int(repeatEntry.get()))
-            button.configure(bg=self.buttonOkColor)
-        # Jeigu eksperimentu skaicius nera sveikas skaicius, mygtuka nudazome raudonai.
-        else:
-            button.configure(bg=self.buttonErrorColor)
-
     def update_probability_close_window_open_main(self, probEntry: Entry):
         """Metodas, kuris atnaujina kanalo iskraipymo tikimybe, uzdaro rodoma langa ir atidaro pagrindini langa.
 
@@ -734,9 +681,3 @@ class GolayWindow:
 
         self.close_window()
         self.create_image_window()
-
-    def close_window_open_experiment(self):
-        """Metodas, kuris uzdaro rodoma langa ir atidaro eksperimentu langa."""
-
-        self.close_window()
-        self.create_experiment_window()
