@@ -419,6 +419,9 @@ class GolayWindow:
         # Is kanalo gautas uzkoduotas paveikslelis.
         receivedEncodedImg = None
 
+        # Fiksuojame, ar ivyko klaida.
+        noError = True
+
         # Jeigu buvo pasirinktas paveikslelis, tik tada siunciame paveiksleli kanalu.
         if self.selectedImageDirectory:
             # Nuimame raudona spalva nuo mygtuko.
@@ -429,15 +432,15 @@ class GolayWindow:
             try:
                 receivedRawImg, receivedEncodedImg = self.golayExecutor.send_image_bit_data(self.selectedImageDirectory)
             except OSError:
-                receivedRawImg = receivedEncodedImg = Image.open(r"bmp\errorImg.bmp")
+                receivedRawImg = receivedEncodedImg = Image.open(r"bmpImages\errorImg.bmp")
+                noError = False
             finally:
-                # Gauti is kanalo paveiksleliai parodomi atitinkamose rodymo srityse.
-                self.show_bmp_image(rawImgLabel, receivedRawImg)
-                self.show_bmp_image(encImgLabel, receivedEncodedImg)
+                # Gauti is kanalo paveiksleliai parodomi atitinkamose rodymo srityse ir issaugomi, jeigu neivyko klaida.
+                self.show_bmp_image(rawImgLabel, receivedRawImg, noError)
+                self.show_bmp_image(encImgLabel, receivedEncodedImg, noError)
         # Jeigu paveikslelis nebuvo pasirinktas, nudazome mygtuka raudonai.
         else:
             sendButton.configure(bg=self.buttonErrorColor)
-
 
     def close_window(self):
         """Metodas, kuris uzdaro rodoma langa."""

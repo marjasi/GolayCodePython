@@ -1,5 +1,4 @@
-# Treciuju saliu biblioteka naudojama teskto vertimui i dvejetaini formata ir atvirksciai.
-from bitarray import bitarray
+# Treciuju saliu biblioteka naudojama darbui su paveiksleliais.
 from PIL import Image
 from comm_channel import CommChannel
 from golay_code import GolayCode
@@ -93,15 +92,17 @@ class GolayExecution:
             errorMessage = "**ERROR**UNABLE**TO**DECODE**TEXT**CORRUPTION**AT*CRITICAL**LEVELS**"
             return errorMessage, errorMessage
 
-    def send_image_bit_data(self, imageDirectory: str) -> tuple[Image, Image]:
+    def send_image_bit_data(self, imageDirectory: str, saveFiles=True) -> tuple[Image, Image]:
         """Metodas, kuris kanalu nusiuncia paveiksleli esanti imageDirectory dviem budais: uzkodavus ir nekodavus.
         Metodas grazina gautus is kanalo paveikslelius.
         Gauti is kanalo paveiksleliai taip pat yra issaugomi toje pacioje direktorijoje
-         kaip ir pasirinktas paveikslelis.
+         kaip ir pasirinktas paveikslelis, jeigu saveFiles yra True.
         Failu pavadinimai sudaromi pridejus prefiksus raw ir enc prie originalaus paveikslelio pavadinimo.
 
         imageDirectory turi buti str tipo kintamasis.
         imageDirectory yra paveikslelio buvimo vieta.
+        saveFiles turi buti bool tipo kintamasis.
+        saveFiles pagal nutylejima yra True.
         Metodas grazina rezultatu rinkini, kurio pirmas elementas yra gautas is kanalo neuzkoduotas paveikslelis,
          o antras elementas - gautas is kanalo uzkoduotas paveikslelis.
         """
@@ -132,15 +133,16 @@ class GolayExecution:
 
         # Sudarome is kanalo gautu paveiksleliu direktorijos kelius.
         rawImgLocation = copy.deepcopy(imgDirectory)
-        rawImgLocation += "raw"
+        rawImgLocation += "\\raw"
         rawImgLocation += copy.deepcopy(imgFileName)
         encodedImgLocation = copy.deepcopy(imgDirectory)
-        encodedImgLocation += "enc"
+        encodedImgLocation += "\\enc"
         encodedImgLocation += copy.deepcopy(imgFileName)
 
-        # Issaugome is kanalo gautus paveikslelius direktorijoje.
-        rawImg = bmp_conv.bit_array_to_bmp(rawImg, rawImgLocation)
-        encodedImg = bmp_conv.bit_array_to_bmp(encodedImg, encodedImgLocation)
+        if saveFiles:
+            # Issaugome is kanalo gautus paveikslelius direktorijoje.
+            rawImg = bmp_conv.bit_array_to_bmp(rawImg, rawImgLocation)
+            encodedImg = bmp_conv.bit_array_to_bmp(encodedImg, encodedImgLocation)
 
         return rawImg, encodedImg
 
