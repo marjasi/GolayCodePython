@@ -65,8 +65,6 @@ class GolayExecution:
 
         decodedVector, algorithmLog = self.golayCode.decode_vector(encodedVector)
 
-        # Paliekame tik tuos elementus, kurie yra esminiai.
-        decodedVector.elements = decodedVector.elements[0:decodedVector.essentialElemLen]
         return decodedVector, algorithmLog
 
     def send_vector(self, vector: Vector) -> Vector:
@@ -239,9 +237,8 @@ class GolayExecution:
                 resultTuple = self.decode_vector(receivedVector)
                 receivedVector = resultTuple[0]
 
-            if not encode:
-                # Pasiimame esmini turini is vektoriaus ir ji pridedame prie gauto teksto masyvo.
-                receivedVector.elements = receivedVector.elements[0:receivedVector.essentialElemLen]
+            # Pasiimame esmini turini is vektoriaus ir ji pridedame prie gauto teksto masyvo.
+            receivedVector.elements = receivedVector.elements[0:receivedVector.essentialElemLen]
 
             for element in receivedVector.elements:
                 receivedBitArray.append(element)
