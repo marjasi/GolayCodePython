@@ -188,7 +188,7 @@ class GolayWindow:
 
         # Lango sukurimas ir ypatybes.
         self.window = Tk()
-        self.set_window_properties(400, 200, "Main Menu", 1, 4)
+        self.set_window_properties(400, 200, "Main Menu", 1, 3)
 
         vectorButton = Button(self.window, text="Send a Vector", command=self.close_window_open_vector)
         vectorButton.grid(columnspan=1, row=0, column=0)
