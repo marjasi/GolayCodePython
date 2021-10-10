@@ -1,5 +1,7 @@
+# Biblioteka skirta darbui su failu skaitymu ir rasymu.
 import io
 import text_conversion as txt_conv
+# Biblioteka skirta bmp failo konvertavimui i base64 formata.
 from base64 import b64encode, b64decode
 from typing import List
 # Biblioteka naudojama darbui su paveiksleliais.
