@@ -1,8 +1,11 @@
+# Biblioteka naudojama objektu kopijoms kurti.
+import copy
+# Biblietka naudojama darbui su failu direktorijomis.
+import ntpath
+# Bibloteka naudojama tipu apibrezimams, kurie nurodomi metodu parametrams ir grazinamoms reiksmems.
 from typing import List
 from vector import Vector
 from matrix import Matrix
-import copy
-import ntpath
 
 
 def divide_list_to_chunks(listToDivide: List[int], chunkSize: int) -> List[int]:

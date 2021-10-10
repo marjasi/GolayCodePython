@@ -1,13 +1,15 @@
+# Biblioteka naudojama objektu kopijoms kurti.
+import copy
+import operations as op
+import text_conversion as txt_conv
+import bmp_conversion as bmp_conv
 # Treciuju saliu biblioteka naudojama darbui su paveiksleliais.
 from PIL import Image
 from comm_channel import CommChannel
 from golay_code import GolayCode
 from vector import Vector
+# Bibloteka naudojama tipu apibrezimams, kurie nurodomi metodu parametrams ir grazinamoms reiksmems.
 from typing import List
-import copy
-import operations as op
-import text_conversion as txt_conv
-import bmp_conversion as bmp_conv
 
 
 class GolayExecution:
@@ -269,6 +271,16 @@ class GolayExecution:
         textBitArray = txt_conv.text_to_bit_array(text)
 
         return txt_conv.bit_array_to_text(self.send_bit_array(textBitArray, True))
+
+    def conduct_experiment(self, repeatNumber: int):
+        """Metodas, kuris ivykdo nurodyta kieki eksperimentu ir ju rezultatus
+            issaugo Excel faile experimentResults.xlsx.
+
+        repeatNumber turi buti int tipo sveikasis skaicius.
+        repeatNumber yra vykdomu eksperimentu kiekis.
+        """
+
+        return None
 
     def get_error_num_positions(self, encodedVector: Vector, receivedVector: Vector, increasePositionValues=False)\
             -> tuple[int, List[int]]:

@@ -1,6 +1,9 @@
-from typing import List
+# Biblioteka naudojama atsitiktiniu skaiciu generavimui.
 import random
+# Biblioteka naudojama objektu kopijoms kurti.
 import copy
+# Bibloteka naudojama tipu apibrezimams, kurie nurodomi metodu parametrams ir grazinamoms reiksmems.
+from typing import List
 
 
 def distort_binary_info(binaryNumber: int) -> int:

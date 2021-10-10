@@ -2,22 +2,8 @@ import io
 import text_conversion as txt_conv
 from base64 import b64encode, b64decode
 from typing import List
+# Biblioteka naudojama darbui su paveiksleliais.
 from PIL import Image, ImageFile
-
-""" Failas atidaromas su read binary rezimu.
-with open(r"D:\\img.bmp", "rb") as bmpFile:
-    bmp = bmpFile.read()
-print(bmp)
-bmpBits = [access_bit(bmp, i) for i in range(len(bmp) * 8)]
-print("BITS:")
-print(bmpBits)
-bytesS = [sum([byte[b] << b for b in range(0, 8)])
-          for byte in zip(*(iter(bmpBits),) * 8)
-          ]
-bytesS = bytearray(bytesS)
-bmpFile = Image.open(io.BytesIO(bytesS))
-bmpFile.save(r"D:\\four.bmp")
-print(bmpFile)"""
 
 
 def get_bit(byteData: bytes, index: int):

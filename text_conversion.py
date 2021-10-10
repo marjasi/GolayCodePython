@@ -1,5 +1,6 @@
 # Treciuju saliu biblioteka naudojama teskto vertimui i dvejetaini formata ir atvirksciai.
 from bitarray import bitarray
+# Bibloteka naudojama tipu apibrezimams, kurie nurodomi metodu parametrams ir grazinamoms reiksmems.
 from typing import List
 
 # Teksto uzkodavimo formatas.

@@ -84,6 +84,22 @@ def check_encoded_vector_regex(vectorString: str) -> bool:
         return False
 
 
+def check_repeat_number_regex(numberString: str) -> bool:
+    """Metodas, kuris patikrina eksperimentu pakartojimu skaiciu pagal nurodyta regex formata.
+
+    numberString turi buti str tipo kintamasis.
+    Metodas grazina bool tipo kintamaji.
+    Grazinama True, jeigu numberString tenkina regex formata.
+    Grazinama False, jeigu numberString netenkina regex formato.
+    regex formatas apibrezia sveikaji skaiciu, kurio pirmas skaitmuo yra didesnis uz nuli.
+    """
+
+    if re.fullmatch("[1-9][0-9]*", numberString) is not None:
+        return True
+    else:
+        return False
+
+
 class GolayWindow:
     """Programos grafines vartotojo sasajos klase.
 
@@ -388,6 +404,7 @@ class GolayWindow:
         repeatEntry = Entry(self.window)
         repeatEntry.grid(columnspan=2, row=3, column=2)
         conductButton = Button(self.window, width=16, text="Conduct Experiment")
+        conductButton.configure(command=partial(self.button_color_conduct_experiment, conductButton, repeatEntry))
         conductButton.grid(columnspan=1, row=4, column=4)
 
         # Inicializuojamas lango veikimo ciklas.
@@ -663,6 +680,24 @@ class GolayWindow:
             button.configure(bg=self.buttonOkColor)
         else:
             # Nepavyko pakeisti iskraipymo tikimybes.
+            button.configure(bg=self.buttonErrorColor)
+
+    def button_color_conduct_experiment(self, button: Button, repeatEntry: Entry):
+        """Metodas, kuris ivykdo eksperimentus ir pakeicia mygtuko spalva.
+
+        button turi buti Button klases tipo kintamasis.
+        button yra mygtukas, kuris bus nudazytas zaliai arba raudonai.
+        repeatEntry turi buti Entry klases tipo kintamasis.
+        repeatEntry yra ivesties laukas, i kuri buvo ivestas vykdomu eksperimentu skaicius.
+        """
+
+        # Pasitikriname, ar eksperimentu skaicius yra sveikas skaicius.
+        if check_repeat_number_regex(repeatEntry.get()):
+            # Vykdome eksperimentus ir nudazome mygtuka zaliai.
+            self.golayExecutor.conduct_experiment(int(repeatEntry.get()))
+            button.configure(bg=self.buttonOkColor)
+        # Jeigu eksperimentu skaicius nera sveikas skaicius, mygtuka nudazome raudonai.
+        else:
             button.configure(bg=self.buttonErrorColor)
 
     def update_probability_close_window_open_main(self, probEntry: Entry):

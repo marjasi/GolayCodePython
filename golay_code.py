@@ -1,6 +1,6 @@
+import operations as op
 from vector import Vector
 from matrix import Matrix
-import operations as op
 
 
 def generate_zero_vector() -> Vector:

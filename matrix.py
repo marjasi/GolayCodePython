@@ -1,5 +1,7 @@
-from typing import List
+# Biblioteka naudojama objektu kopijoms kurti.
 import copy
+# Bibloteka naudojama tipu apibrezimams, kurie nurodomi metodu parametrams ir grazinamoms reiksmems.
+from typing import List
 
 
 class Matrix:
