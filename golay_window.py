@@ -5,6 +5,8 @@ import operations as op
 from tkinter import *
 from tkinter.scrolledtext import ScrolledText
 from tkinter import filedialog
+# Bibloteka naudojama tipu apibrezimams, kurie nurodomi metodu parametrams ir grazinamoms reiksmems.
+from typing import List
 # Biblioteka naudojama perduoti metodams parametrus spaudziant mygtukus.
 from functools import partial
 from golay_execution import GolayExecution
@@ -24,6 +26,26 @@ def set_entry_text(entry: Entry, entryText: str):
 
     # Idedame nauja teksta entryText.
     entry.insert(0, entryText)
+
+
+def get_error_position_entry_text(errorPositions: List[int]) -> str:
+    """Metodas, kuris suformatuoja pateiktas ivykusiu klaidu pozicijas klaidu poziciju ivesties parodymo sriciai.
+
+    errorPositions turi buti masyvas, kurio elementai yra int tipo sveikieji skaiciai.
+    errorPositions yra pozicijos, kuriose ivyko klaidos.
+    Metodas grazina suformatuotas klaidu pozicijas str tipo kintamuoju.
+    """
+
+    errorPositionEntryText = "|"
+
+    for errorPosition in errorPositions:
+        errorPositionEntryText += "|"
+        errorPositionEntryText += str(errorPosition)
+        errorPositionEntryText += "|"
+
+    errorPositionEntryText += "|"
+
+    return errorPositionEntryText
 
 
 def set_scrolled_text_area_text(scrolledTextArea: ScrolledText, areaText: str):
@@ -232,8 +254,12 @@ class GolayWindow:
         distVectorErrorEntry.grid(columnspan=2, row=10, column=2)
         errorPositionLabel = Label(self.window, text="Mistake Positions:")
         errorPositionLabel.grid(columnspan=2, row=11, column=0)
-        errorPositionEntry = Entry(self.window, state="disabled", width=25, justify="center")
-        errorPositionEntry.grid(columnspan=2, row=11, column=2)
+        errorPositionEntry = Entry(self.window, state="disabled", width=65, justify="center")
+        errorPositionEntry.grid(columnspan=4, row=11, column=2)
+
+        errorPositionEntry.configure(state="normal")
+        set_entry_text(errorPositionEntry, "|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|")
+        errorPositionEntry.configure(state="disabled")
 
         # Gauto is kanalo vektoriaus ivestis.
         distVectorEntry = Entry(self.window, width=25)
@@ -250,7 +276,8 @@ class GolayWindow:
         vectorInputEntry.grid(columnspan=2, row=6, column=2)
         vectorInputButton = Button(self.window, width=13, text="Encode and Send")
         vectorInputButton.configure(command=partial(self.encode_send_vector, vectorInputButton, vectorInputEntry,
-                                                    encodedVectorEntry, distVectorEntry, distVectorErrorEntry))
+                                                    encodedVectorEntry, distVectorEntry, distVectorErrorEntry,
+                                                    errorPositionEntry))
         vectorInputButton.grid(columnspan=1, row=7, column=4)
 
         # Dekoduoto vektoriaus parodymo ivestys.
@@ -278,7 +305,8 @@ class GolayWindow:
         # Klaidu perskaiciavimas.
         renewErrorButton = Button(self. window, width=16, text="Recalculate Mistakes")
         renewErrorButton.configure(command=partial(self.renew_error_number, encodedVectorEntry,
-                                                   distVectorEntry, distVectorErrorEntry, renewErrorButton))
+                                                   distVectorEntry, distVectorErrorEntry,
+                                                   errorPositionEntry, renewErrorButton))
         renewErrorButton.grid(columnspan=1, row=10, column=4)
 
         # Dekoduotas vektorius.
@@ -582,7 +610,7 @@ class GolayWindow:
         return correctedErrors
 
     def renew_error_number(self, encodedVectorEntry: Entry, distortedVectorEntry: Entry, mistakeEntry: Entry,
-                           mistakeButton: Button):
+                           errorPositionEntry: Entry, mistakeButton: Button):
         """Metodas, kuris perskaicijuoja klaidu skaiciu is kanalo gautame iskreiptame vektoriuje.
 
         encodedVectorEntry turi buti Entry klases tipo kintamasis.
@@ -591,6 +619,8 @@ class GolayWindow:
         distortedVectorEntry yra iskraipyto vektoriaus parodymo ivestis.
         mistakeEntry turi buti Entry klases tipo kintamasis.
         mistakeEntry yra kanale padarytu klaidu skaiciaus parodymo ivestis.
+        errorPositionEntry turi buti Entry klases tipo kintamasis.
+        errorPositionEntry yra ivykusiu klaidu poziciju parodymo ivestis.
         mistakeButton turi buti Button klases tipo kintamasis.
         mistakeButton yra klaidu perskaiciavimo mygtukas.
         """
@@ -602,11 +632,15 @@ class GolayWindow:
         if encodedVector.elements and receivedVector.elements\
                 and check_encoded_vector_regex(encodedVectorEntry.get())\
                 and check_encoded_vector_regex(distortedVectorEntry.get()):
-            # Suskaiciuojamos padarytos klaidos ir atnaujinamas klaidu skaicius.
-            resultTuple = self.golayExecutor.get_error_num_positions(encodedVector, receivedVector)
+            # Suskaiciuojamos padarytos klaidos ir atnaujinamas klaidu skaicius bei ju pozicijos.
+            resultTuple = self.golayExecutor.get_error_num_positions(encodedVector, receivedVector, True)
             mistakeEntry.configure(state="normal")
             set_entry_text(mistakeEntry, str(resultTuple[0]))
             mistakeEntry.configure(state="disabled")
+
+            errorPositionEntry.configure(state="normal")
+            set_entry_text(errorPositionEntry, get_error_position_entry_text(resultTuple[1]))
+            errorPositionEntry.configure(state="disabled")
 
             # Nudazome klaidos perskaiciavimo mygtuka zaliai.
             mistakeButton.configure(bg=self.buttonOkColor)
@@ -650,7 +684,7 @@ class GolayWindow:
             textSendButton.configure(bg=self.buttonErrorColor)
 
     def encode_send_vector(self, button: Button, vectorEntry: Entry, encodedVectorEntry: Entry,
-                           distortedVectorEntry: Entry, mistakeEntry: Entry):
+                           distortedVectorEntry: Entry, mistakeEntry: Entry, errorPositionEntry: Entry):
         """Metodas, kuris uzkoduoja ivesta vektoriu ir siuncia ji per komunikacijos kanalo.
 
         Pries vektoriu uzkoduojant, patikrinama, ar vartotojas ivede tinkamo ilgio ir turinio vektoriu.
@@ -662,8 +696,10 @@ class GolayWindow:
         encodedVectorEntry yra uzkoduoto vektoriaus parodymo ivestis.
         distortedVectorEntry turi buti Entry klases tipo kintamasis.
         distortedVectorEntry yra iskraipyto vektoriaus parodymo ivestis.
-        mistakeEntry yra Entry klases tipo kintamasis.
+        mistakeEntry turi buti Entry klases tipo kintamasis.
         mistakeEntry yra kanale padarytu klaidu skaiciaus parodymo ivestis.
+        errorPositionEntry turi buti Entry klases tipo kintamasis.
+        errorPositionEntry yra ivykusiu klaidu poziciju parodymo ivestis.
         """
 
         # Jeigu buvo ivestas netinkamas vektorius, mygtukas nudazomas raudonai.
@@ -686,11 +722,14 @@ class GolayWindow:
             receivedVector = self.golayExecutor.send_vector(encodedVector)
             set_entry_text(distortedVectorEntry, receivedVector.get_elements_as_string())
 
-            # Suskaiciuojamos padarytos klaidos ir parodomas klaidu skaicius.
-            resultTuple = self.golayExecutor.get_error_num_positions(encodedVector, receivedVector)
+            # Suskaiciuojamos padarytos klaidos ir parodomas klaidu skaicius bei ju pozicijos.
+            resultTuple = self.golayExecutor.get_error_num_positions(encodedVector, receivedVector, True)
             mistakeEntry.configure(state="normal")
             set_entry_text(mistakeEntry, str(resultTuple[0]))
             mistakeEntry.configure(state="disabled")
+            errorPositionEntry.configure(state="normal")
+            set_entry_text(errorPositionEntry, get_error_position_entry_text(resultTuple[1]))
+            errorPositionEntry.configure(state="disabled")
 
     def button_color_update_probability(self, button: Button, probEntry: Entry):
         """Metodas, kuris atnaujina kanalo iskraipymo tikimybe ir pakeicia mygtuko spalva.
