@@ -257,10 +257,6 @@ class GolayWindow:
         errorPositionEntry = Entry(self.window, state="disabled", width=65, justify="center")
         errorPositionEntry.grid(columnspan=4, row=11, column=2)
 
-        errorPositionEntry.configure(state="normal")
-        set_entry_text(errorPositionEntry, "|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|")
-        errorPositionEntry.configure(state="disabled")
-
         # Gauto is kanalo vektoriaus ivestis.
         distVectorEntry = Entry(self.window, width=25)
         distVectorEntry.grid(columnspan=2, row=9, column=2)
