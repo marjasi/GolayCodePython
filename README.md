@@ -12,9 +12,9 @@ It allows the user to send data through the channel and showcases, how effective
 ## Quickstart
 Launch the *GolayCode.bat* file to open the already generated executable file in the *dist* folder.
 ## Generate new .exe file
-Make sure you have everything installed. Launch *setup.py* with the *python setup.py py2exe* command.
+Make sure you have every mandatory library installed. Launch *setup.py* with the *python setup.py py2exe* command.
 Your executable file will be located in the subdirectory *dir* and will have the name *main.exe*.
-# Main Features
+# Primary Features
 - Set and change the distortion probability of the communication channel in any window.
 - Send a binary vector of length 12 and compare raw data with encrypted then decoded values.
 - Transfer and receive a block of text, compare the Golay Code algorithm's effectiveness.
