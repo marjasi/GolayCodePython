@@ -23,9 +23,10 @@ Your executable file will be located in the subdirectory *dir* and will have the
 All code comments are written in Lithuanian, but the GUI is English.
 # Screenshots
 ## Initial launch and main menu
-
+![image](https://user-images.githubusercontent.com/43152072/148556095-f64b3204-e812-4fa6-9b0b-dc8735861faa.png)
 ## Sending a vector
-
+![Vector](https://user-images.githubusercontent.com/43152072/148556114-718942f8-a664-45ae-bfea-616f5f4e2d76.jpg)
 ## Sending a block of text
-
-## Sending a .bmp file
+![Text](https://user-images.githubusercontent.com/43152072/148556140-79f0e0b2-ad0c-43f7-b832-62056638ac94.jpg)
+## Sending an image
+![Saturn](https://user-images.githubusercontent.com/43152072/148556158-ed573c71-04e9-4007-9b6d-830a2e95b81b.jpg)
